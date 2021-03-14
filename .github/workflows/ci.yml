@@ -1,0 +1,48 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  ci:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        php: [7.3, 7.4, 8.0]
+
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@master
+
+      - name: Setup PHP 🏗
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, gd
+          coverage: none
+
+      - name: Cache PHP dependencies 📦
+        uses: actions/cache@v2.1.4
+        with:
+          path: vendor
+          key: dependencies-php-${{ matrix.php }}-composer-${{ hashFiles('**/composer.lock') }}
+
+      - name: Run lint 👀
+        uses: docker://oskarstark/php-cs-fixer-ga
+        with:
+          args: --config=.php_cs.dist --allow-risky=yes
+
+      - name: Install dependencies 👨🏻‍💻
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: Run tests 🧪
+        run: composer test
