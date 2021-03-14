@@ -36,13 +36,14 @@ jobs:
           path: vendor
           key: dependencies-php-${{ matrix.php }}-composer-${{ hashFiles('**/composer.lock') }}
 
-      - name: Run lint 👀
-        uses: docker://oskarstark/php-cs-fixer-ga
-        with:
-          args: --config=.php_cs.dist --allow-risky=yes
-
       - name: Install dependencies 👨🏻‍💻
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
       - name: Run tests 🧪
         run: composer test
+
+      - uses: actions/checkout@v2
+      - name: Run lint 👀
+        uses: docker://oskarstark/php-cs-fixer-ga
+        with:
+          args: --config=.php_cs.dist --allow-risky=yes
