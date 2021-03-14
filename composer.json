@@ -37,8 +37,8 @@
         }
     },
     "scripts": {
-        "test": "vendor/bin/phpunit --colors=always",
-        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+        "test": "vendor/bin/phpunit tests --colors=always",
+        "test-coverage": "vendor/bin/phpunit tests --coverage-html coverage"
     },
     "config": {
         "sort-packages": true

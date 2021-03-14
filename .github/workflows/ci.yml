@@ -40,7 +40,7 @@ jobs:
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
       - name: Run tests 🧪
-        run: vendor/bin/phpunit
+        run: composer test
 
       - uses: actions/checkout@v2
       - name: Run lint 👀
