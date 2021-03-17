@@ -1,8 +1,8 @@
 # Inventory Management for Laravel
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/ivansotelo/laravel-inventory.svg?style=flat-square)](https://packagist.org/packages/ivansotelo/laravel-inventory)
-[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/ivansotelo/laravel-inventory/run-tests?label=tests)](https://github.com/ivansotelo/laravel-inventory/actions?query=workflow%3ATests+branch%3Amaster)
-[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/ivansotelo/laravel-inventory/Check%20&%20fix%20styling?label=code%20style)](https://github.com/ivansotelo/laravel-inventory/actions?query=workflow%3A"Check+%26+fix+styling"+branch%3Amaster)
+[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/ivansotelo/laravel-inventory/run-tests?label=tests)](https://github.com/ivansotelo/laravel-inventory/actions?query=workflow%3Aci+branch%3Amaster)
+[![GitHub Code Style Action Status](https://img.shields.io/github/workflow/status/ivansotelo/laravel-inventory/Check%20&%20fix%20styling?label=code%20style)](https://github.com/ivansotelo/laravel-inventory/actions?query=workflow%3A"ci"+branch%3Amaster)
 [![Total Downloads](https://img.shields.io/packagist/dt/ivansotelo/laravel-inventory.svg?style=flat-square)](https://packagist.org/packages/ivansotelo/laravel-inventory)
 
 
