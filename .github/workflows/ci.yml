@@ -17,9 +17,19 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        php: [7.3, 7.4]
+        php: [7.4]
 
     steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Run lint 👀
+        uses: docker://oskarstark/php-cs-fixer-ga
+        with:
+          args: --config=.php_cs.dist --allow-risky=yes
+  
       - name: Checkout 🛎
         uses: actions/checkout@master
 
@@ -41,9 +51,3 @@ jobs:
 
       - name: Run tests 🧪
         run: composer test
-
-      - uses: actions/checkout@v2
-      - name: Run lint 👀
-        uses: docker://oskarstark/php-cs-fixer-ga
-        with:
-          args: --config=.php_cs.dist --allow-risky=yes
