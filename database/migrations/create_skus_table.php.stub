@@ -1,0 +1,35 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateSkuable extends Migration
+{
+    public function up()
+    {
+        Schema::create('inventory_skus', function (Blueprint $table) {
+            $table->id();
+            $table->unique(['code']);
+
+            $table->integer('inventoriable_id')->unsigned();
+
+            /*
+             * Make sure each SKU is unique
+             */
+            $table->unique(['inventoriable_id', 'code']);
+
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('inventory_skus');
+    }
+}
