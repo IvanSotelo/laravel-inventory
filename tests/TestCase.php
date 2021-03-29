@@ -3,11 +3,17 @@
 namespace IvanSotelo\Inventory\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Schema\Blueprint;
 use Orchestra\Testbench\TestCase as Orchestra;
+use IvanSotelo\Inventory\Inventory;
 use IvanSotelo\Inventory\InventoryServiceProvider;
 
 class TestCase extends Orchestra
 {
+    protected $inventoryModel;
+
+    protected $secondInventoryModel;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -15,6 +21,14 @@ class TestCase extends Orchestra
         Factory::guessFactoryNamesUsing(
             fn (string $modelName) => 'IvanSotelo\\Inventory\\Database\\Factories\\'.class_basename($modelName).'Factory'
         );
+
+        $this->setUpDatabase($this->app);
+
+        $this->loadMigrationsFrom(__DIR__.'/../migrations');
+
+        $this->inventoryModel = InventoryModel::first();
+
+        $this->secondInventoryModel = InventoryModel::find(2);
     }
 
     protected function getPackageProviders($app)
@@ -37,5 +51,44 @@ class TestCase extends Orchestra
         include_once __DIR__.'/../database/migrations/create_inventory_table.php.stub';
         (new \CreatePackageTable())->up();
         */
+    }
+
+    protected function setUpDatabase($app)
+    {
+        $builder = $app['db']->connection()->getSchemaBuilder();
+
+        $builder->create('inventory_models', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name');
+            $table->timestamps();
+        });
+
+        $builder->create('inventories', function (Blueprint $table) {
+            $table->id();
+            $table->decimal('quantity', 8, 2)->default(0);
+            $table->text('description')->nullable();
+            $table->string('inventoriable_type');
+            $table->unsignedBigInteger('inventoriable_id');
+            $table->index(['inventoriable_type', 'inventoriable_id']);
+            $table->integer('user_id')->unsigned()->nullable();
+
+            $table->integer('location_id')->unsigned()->nullable();
+            $table->timestamps();
+        });
+
+        InventoryModel::create([
+            'name' => 'InventoryModel',
+        ]);
+
+        InventoryModel::create([
+            'name' => 'SecondInventoryModel',
+        ]);
+
+        Inventory::create([
+            'quantity' => 0,
+            'description' => 'Inventory description',
+            'inventoriable_type' => 'IvanSotelo\Inventory\Tests\InventoryModel',
+            'inventoriable_id' => '1',
+        ]);
     }
 }
