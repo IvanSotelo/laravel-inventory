@@ -12,7 +12,10 @@ class CreateInventoryTable extends Migration
             $table->id();
 
             $table->integer('user_id')->unsigned()->nullable();
-            $table->integer('inventoriable_id')->unsigned();
+            $table->string('inventoriable_type');
+            $table->unsignedBigInteger('inventoriable_id');
+            $table->index(['inventoriable_type', 'inventoriable_id']);
+
             $table->integer('location_id')->unsigned();
             $table->decimal('quantity', 8, 2)->default(0);
             $table->text('description')->nullable();
@@ -21,15 +24,11 @@ class CreateInventoryTable extends Migration
              * This allows only one inventory stock
              * to be created on a single location
              */
-            $table->unique(['inventoriable_id', 'location_id']);
+            $table->unique(['location_id']);
 
             $table->foreign('user_id')->references('id')->on('users')
                 ->onUpdate('restrict')
                 ->onDelete('set null');
-
-            $table->foreign('inventoriable_id')->references('id')->on('inventories')
-                ->onUpdate('restrict')
-                ->onDelete('cascade');
 
             $table->foreign('location_id')->references('id')->on('locations')
                 ->onUpdate('restrict')

@@ -12,7 +12,9 @@ class CreateSkuable extends Migration
             $table->id();
             $table->unique(['code']);
 
-            $table->integer('inventoriable_id')->unsigned();
+            $table->string('inventoriable_type');
+            $table->unsignedBigInteger('inventoriable_id');
+            $table->index(['inventoriable_type', 'inventoriable_id']);
 
             /*
              * Make sure each SKU is unique
