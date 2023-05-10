@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class InventoryMovement extends Model
 {
-
     /**
      * The inventory movements table.
      *
@@ -21,6 +20,6 @@ class InventoryMovement extends Model
      */
     public function stock()
     {
-        return $this->belongsTo(Inventory::class);
+        return $this->belongsTo(InventoryStock::class);
     }
 }

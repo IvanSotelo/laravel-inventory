@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class InventorySku extends Model
 {
-
     /**
      * Relationship.
      *

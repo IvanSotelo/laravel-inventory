@@ -8,7 +8,10 @@ use IvanSotelo\Inventory\HasInventory;
 class InventoryModel extends Model
 {
     use HasInventory;
+
     public $timestamps = false;
+
     protected $guarded = [];
+
     protected $hidden = [];
 }

@@ -4,15 +4,15 @@ namespace IvanSotelo\Inventory;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Inventory extends Model
+class InventoryStock extends Model
 {
-
     /**
      * The inventories table.
      *
      * @var string
      */
-    protected $table = 'inventories';
+    protected $table = 'inventory_stocks';
+
     protected $fillable = ['quantity', 'inventoriable_type', 'inventoriable_id'];
 
     /**

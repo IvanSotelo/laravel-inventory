@@ -4,9 +4,9 @@ namespace IvanSotelo\Inventory\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Schema\Blueprint;
-use Orchestra\Testbench\TestCase as Orchestra;
-use IvanSotelo\Inventory\Inventory;
+use IvanSotelo\Inventory\InventoryStock;
 use IvanSotelo\Inventory\InventoryServiceProvider;
+use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {
@@ -63,7 +63,7 @@ class TestCase extends Orchestra
             $table->timestamps();
         });
 
-        $builder->create('inventories', function (Blueprint $table) {
+        $builder->create('inventory_stocks', function (Blueprint $table) {
             $table->id();
             $table->decimal('quantity', 8, 2)->default(0);
             $table->text('description')->nullable();
@@ -84,11 +84,18 @@ class TestCase extends Orchestra
             'name' => 'SecondInventoryModel',
         ]);
 
-        Inventory::create([
+        InventoryStock::create([
             'quantity' => 0,
             'description' => 'Inventory description',
             'inventoriable_type' => 'IvanSotelo\Inventory\Tests\InventoryModel',
             'inventoriable_id' => '1',
+        ]);
+
+        InventoryStock::create([
+            'quantity' => 10,
+            'description' => 'Inventory description',
+            'inventoriable_type' => 'IvanSotelo\Inventory\Tests\InventoryModel',
+            'inventoriable_id' => '2',
         ]);
     }
 }

@@ -2,9 +2,9 @@
 
 namespace IvanSotelo\Inventory;
 
+use IvanSotelo\Inventory\Commands\InventoryCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use IvanSotelo\Inventory\Commands\InventoryCommand;
 
 class InventoryServiceProvider extends PackageServiceProvider
 {

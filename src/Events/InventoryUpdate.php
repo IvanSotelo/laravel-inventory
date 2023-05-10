@@ -2,8 +2,8 @@
 
 namespace IvanSotelo\Inventory\Events;
 
-use IvanSotelo\Inventory\Inventory;
 use Illuminate\Database\Eloquent\Model;
+use IvanSotelo\Inventory\Inventory;
 
 class InventoryUpdate
 {
@@ -31,9 +31,7 @@ class InventoryUpdate
     /**
      * Create a new InventoryUpdate instance.
      *
-     * @param  \IvanSotelo\Inventory\Inventory|null $oldInventory
-     * @param  \IvanSotelo\Inventory\Inventory $newInventory
-     * @param  \Illuminate\Database\Eloquent\Model $model
+     * @param  \IvanSotelo\Inventory\Inventory|null  $oldInventory
      * @return void
      */
     public function __construct($oldInventory, Inventory $newInventory, Model $model)

@@ -19,8 +19,7 @@ trait HasSku
     /**
      * Returns an item record by the specified SKU code.
      *
-     * @param string $sku
-     *
+     * @param  string  $sku
      * @return bool
      */
     public static function findBySku($sku)
@@ -79,7 +78,6 @@ trait HasSku
             return $this->sku->getAttribute('code');
         }
 
-        return;
     }
 
     /**
@@ -91,7 +89,6 @@ trait HasSku
     {
         return $this->getSku();
     }
-
 
     /**
      * Generates an item SKU record.
@@ -105,7 +102,7 @@ trait HasSku
     public function generateSku()
     {
         // Make sure sku generation is enabled and the item has a category, if not we'll return false.
-        if (!$this->skusEnabled()) {
+        if (! $this->skusEnabled()) {
             return false;
         }
 
@@ -187,12 +184,11 @@ trait HasSku
      * then SKU. If overwrite is false but the item has an SKU, an exception
      * is thrown.
      *
-     * @param string $code
-     * @param bool   $overwrite
+     * @param  string  $code
+     * @param  bool  $overwrite
+     * @return mixed|bool
      *
      * @throws SkuAlreadyExistsException
-     *
-     * @return mixed|bool
      */
     public function createSku($code, $overwrite = false)
     {
@@ -201,7 +197,7 @@ trait HasSku
 
         if ($sku) {
             // The dev doesn't want the SKU overridden, we'll thrown an exception
-            if (!$overwrite) {
+            if (! $overwrite) {
                 $message = Lang::get('inventory::exceptions.SkuAlreadyExistsException');
 
                 throw new SkuAlreadyExistsException($message);
@@ -219,15 +215,14 @@ trait HasSku
      * Updates the items current SKU or the SKU
      * supplied with the specified code.
      *
-     * @param string $code
-     * @param null   $sku
-     *
+     * @param  string  $code
+     * @param  null  $sku
      * @return mixed|bool
      */
     public function updateSku($code, $sku = null)
     {
         // Get the current SKU record if one isn't supplied
-        if (!$sku) {
+        if (! $sku) {
             $sku = $this->sku()->first();
         }
 
@@ -235,7 +230,7 @@ trait HasSku
          * If an SKU still doesn't exist after
          * trying to find one, we'll create one
          */
-        if (!$sku) {
+        if (! $sku) {
             return $this->processSkuGeneration($this->getKey(), $code);
         }
 
@@ -245,9 +240,8 @@ trait HasSku
     /**
      * Processes an SKU generation covered by database transactions.
      *
-     * @param int|string $inventoryId
-     * @param string     $code
-     *
+     * @param  int|string  $inventoryId
+     * @param  string  $code
      * @return bool|mixed
      */
     protected function processSkuGeneration($inventoryId, $code)
@@ -281,9 +275,7 @@ trait HasSku
      * Processes updating the specified SKU
      * record with the specified code.
      *
-     * @param Model  $sku
-     * @param string $code
-     *
+     * @param  string  $code
      * @return mixed|bool
      */
     protected function processSkuUpdate(Model $sku, $code)
@@ -313,5 +305,4 @@ trait HasSku
     {
         return Config::get('inventory.skus_enabled', false);
     }
-
 }

@@ -7,11 +7,11 @@ return [
     |--------------------------------------------------------------------------
     /
     / The class of inventory model that holds all inventories. The model
-    / must be or extend `IvanSotelo\Inventory\Inventory::class`
+    / must be or extend `IvanSotelo\Inventory\InventoryStock::class`
     / for the inventory package to work properly.
     /
     */
-    'inventory_model' => IvanSotelo\Inventory\Inventory::class,
+    'inventory_model' => IvanSotelo\Inventory\InventoryStock::class,
 
     /*
     |--------------------------------------------------------------------------

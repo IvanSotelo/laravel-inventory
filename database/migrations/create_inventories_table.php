@@ -8,10 +8,11 @@ class CreateInventoryTable extends Migration
 {
     public function up()
     {
-        Schema::create('inventories', function (Blueprint $table) {
+        Schema::create('inventory_stocks', function (Blueprint $table) {
             $table->id();
 
             $table->integer('user_id')->unsigned()->nullable();
+
             $table->string('inventoriable_type');
             $table->unsignedBigInteger('inventoriable_id');
             $table->index(['inventoriable_type', 'inventoriable_id']);
@@ -19,12 +20,15 @@ class CreateInventoryTable extends Migration
             $table->integer('location_id')->unsigned();
             $table->decimal('quantity', 8, 2)->default(0);
             $table->text('description')->nullable();
+            $table->string('aisle')->nullable();
+            $table->string('row')->nullable();
+            $table->string('bin')->nullable();
 
             /*
              * This allows only one inventory stock
              * to be created on a single location
              */
-            $table->unique(['location_id']);
+            $table->unique(['inventoriable_id', 'location_id']);
 
             $table->foreign('user_id')->references('id')->on('users')
                 ->onUpdate('restrict')
@@ -70,6 +74,6 @@ class CreateInventoryTable extends Migration
     public function down()
     {
         Schema::dropIfExists('inventory_movements');
-        Schema::dropIfExists('inventories');
+        Schema::dropIfExists('inventory_stocks');
     }
 }
