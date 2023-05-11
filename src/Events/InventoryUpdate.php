@@ -3,21 +3,21 @@
 namespace IvanSotelo\Inventory\Events;
 
 use Illuminate\Database\Eloquent\Model;
-use IvanSotelo\Inventory\Inventory;
+use IvanSotelo\Inventory\Models\InventoryStock;
 
 class InventoryUpdate
 {
     /**
      * Old inventory instance before changes have made.
      *
-     *  @var \IvanSotelo\Inventory\Inventory|null
+     *  @var \IvanSotelo\Inventory\InventoryStock|null
      */
     public $oldInventory = null;
 
     /**
      * New inventory instance that has been persisted to the storage.
      *
-     * @var \IvanSotelo\Inventory\Inventory
+     * @var \IvanSotelo\Inventory\InventoryStock
      */
     public $newInventory;
 
@@ -31,10 +31,10 @@ class InventoryUpdate
     /**
      * Create a new InventoryUpdate instance.
      *
-     * @param  \IvanSotelo\Inventory\Inventory|null  $oldInventory
+     * @param  \IvanSotelo\Inventory\InventoryStock|null  $oldInventory
      * @return void
      */
-    public function __construct($oldInventory, Inventory $newInventory, Model $model)
+    public function __construct($oldInventory, InventoryStock $newInventory, Model $model)
     {
         $this->oldInventory = $oldInventory;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace IvanSotelo\Inventory;
+namespace IvanSotelo\Inventory\Models;
 
 use Illuminate\Database\Eloquent\Model;
 

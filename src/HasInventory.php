@@ -2,55 +2,74 @@
 
 namespace IvanSotelo\Inventory;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Query\Builder as QueryBuilder;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
 use IvanSotelo\Inventory\Events\InventoryUpdate;
 use IvanSotelo\Inventory\Exeptions\InvalidInventory;
+use IvanSotelo\Inventory\Models\Location;
+use IvanSotelo\Inventory\Models\InventoryStock;
 
 trait HasInventory
 {
     /**
-     * Get inventory of the model.
+     * The hasMany stocks relationship.
      *
      * @return  \Illuminate\Database\Eloquent\Relations\MorphMany
      */
-    public function inventories()
+    public function stocks()
     {
-        return $this->morphMany($this->getInventoryModelClassName(), 'inventoriable')->latest('id');
+        return $this->morphMany(InventoryStock::class, 'inventoriable')->latest('id');
     }
 
     /**
-     * Return the last inventory instance of the model.
+     * Returns the total sum of the current item stock.
      *
-     * @return  \Illuminate\Database\Eloquent\Relations\Relation
+     * @return int|float
      */
-    public function inventory()
+    public function getTotalStock()
     {
-        return $this->currentInventory();
+        return $this->stocks->sum('quantity');
     }
 
     /**
-     * Determine if a given quantity is in inventory on the model.
-     *
-     * @param  string  $quantity
-     * @return bool
-     */
-    public function inInventory($quantity = 1)
-    {
-        return $this->inventories->first()->quantity > 0 && $this->inventories->first()->quantity >= $quantity;
-    }
-
-    /**
-     * Determine if the model is not in inventory.
+     * Returns true/false if the inventory has stock.
      *
      * @return bool
      */
-    public function notInInventory()
+    public function isInStock()
     {
-        return $this->inventories->first()->quantity <= 0;
+        return ($this->getTotalStock() > 0 ? true : false);
+    }
+
+    /**
+     * Creates a stock record to the current inventory item.
+     *
+     * @param int|float|string $quantity
+     * @param Model            $location
+     * @param string           $reason
+     * @param int|float|string $cost
+     * @param string           $aisle
+     * @param string           $row
+     * @param string           $bin
+     *
+     * @return Model
+     */
+    public function createStockOnLocation($quantity, Model $location, $reason = '', $cost = 0, $serial = null, $aisle = null, $row = null, $bin = null)
+    {
+         // A stock record wasn't found on this location, we'll create one.
+         $stock = $this->stocks()->getRelated()->newInstance();
+
+         $stock->setAttribute('inventory_id', $this->getKey());
+         $stock->setAttribute('location_id', $location->getKey());
+         $stock->setAttribute('quantity', 0);
+         $stock->setAttribute('aisle', $aisle);
+         $stock->setAttribute('row', $row);
+         $stock->setAttribute('bin', $bin);
+
+         if($stock->save() && $quantity > 0) {
+             return $stock->put($quantity, $reason, $cost, null, null, $serial);
+         }
+
+        return false;
     }
 
     /**
@@ -80,11 +99,11 @@ trait HasInventory
             throw InvalidInventory::value($quantity);
         }
 
-        if (! isset($this->inventories->first()->quantity)) {
+        if (! isset($this->stocks->first()->quantity)) {
             return $this->createInventory($addQuantity, $description);
         }
 
-        $newQuantity = $this->inventories->first()->quantity + $addQuantity;
+        $newQuantity = $this->stocks->first()->quantity + $addQuantity;
 
         return $this->createInventory($newQuantity, $description);
     }
@@ -107,7 +126,7 @@ trait HasInventory
             throw InvalidInventory::subtract($subtractQuantity);
         }
 
-        $newQuantity = $this->inventories->first()->quantity - abs($subtractQuantity);
+        $newQuantity = $this->stocks->first()->quantity - abs($subtractQuantity);
 
         if ($newQuantity < 0) {
             throw InvalidInventory::negative($subtractQuantity);
@@ -141,7 +160,7 @@ trait HasInventory
     {
         $oldInventory = $this->currentInventory();
 
-        $newInventory = $this->inventories()->create([
+        $newInventory = $this->stocks()->create([
             'quantity' => abs($quantity),
             'description' => $description,
         ]);
@@ -158,9 +177,9 @@ trait HasInventory
      */
     public function currentInventory()
     {
-        $inventories = $this->relationLoaded('inventories') ? $this->inventories : $this->inventories();
+        $stocks = $this->relationLoaded('stocks') ? $this->stocks : $this->stocks();
 
-        return $inventories->first();
+        return $stocks->first();
     }
 
     /**
@@ -171,97 +190,10 @@ trait HasInventory
      */
     public function clear($newStock = -1)
     {
-        $this->inventories()->delete();
+        $this->stocks()->delete();
 
         return $newStock >= 0 ? $this->setInventory($newStock) : true;
     }
 
-    /**
-     * Scope inventory model for a givin quantity and operatior.
-     *
-     * @param  int  $quantity
-     * @param  string  $operator (<,>,<=,>=,=,<>)
-     * @param  array  $inventoriableId
-     * @return \Illuminate\Database\Query\Builder
-     */
-    public function scopeInventoryIs(Builder $builder, $quantity = 0, $operator = '=', ...$inventoriableId)
-    {
-        $inventoriableId = is_array($inventoriableId) ? Arr::flatten($inventoriableId) : func_get_args();
 
-        $builder->whereHas('inventories', function (Builder $query) use ($operator, $quantity, $inventoriableId) {
-            $query->when($inventoriableId, function ($query, $inventoriableId) {
-                return $query->whereIn('inventoriable_id', $inventoriableId);
-            })->where('quantity', $operator, $quantity)->whereIn('id', function (QueryBuilder $query) {
-                $query->select(DB::raw('max(id)'))
-                        ->from($this->getInventoryTableName())
-                        ->where('inventoriable_type', $this->getInventoryModelType())
-                        ->whereColumn($this->getModelKeyColumnName(), $this->getQualifiedKeyName());
-            });
-        });
-    }
-
-    /**
-     * Scope inventory model to everything other than given quantity.
-     *
-     * @param  int  $quantity
-     * @param  array  $inventoriableId
-     * @return \Illuminate\Database\Query\Builder
-     */
-    public function scopeInventoryIsNot(Builder $builder, $quantity = 0, ...$inventoriableId)
-    {
-        $inventoriableId = is_array($inventoriableId) ? Arr::flatten($inventoriableId) : func_get_args();
-
-        $builder->whereHas('inventories', function (Builder $query) use ($quantity, $inventoriableId) {
-            $query->when($inventoriableId, function ($query, $inventoriableId) {
-                return $query->whereIn('inventoriable_id', $inventoriableId);
-            })->where('quantity', '<>', $quantity)->whereIn('id', function (QueryBuilder $query) {
-                $query->select(DB::raw('max(id)'))
-                        ->from($this->getInventoryTableName())
-                        ->where('inventoriable_type', $this->getInventoryModelType())
-                        ->whereColumn($this->getModelKeyColumnName(), $this->getQualifiedKeyName());
-            });
-        });
-    }
-
-    /**
-     * Return the table name for the inventory model.
-     *
-     * @return string
-     */
-    protected function getInventoryTableName()
-    {
-        $modelClass = $this->getInventoryModelClassName();
-
-        return (new $modelClass)->getTable();
-    }
-
-    /**
-     * Return the inventory model uses the trait.
-     *
-     * @return string
-     */
-    protected function getInventoryModelType()
-    {
-        return array_search(static::class, Relation::morphMap()) ?: static::class;
-    }
-
-    /**
-     * Return the model key column name set on config file.
-     *
-     * @return string
-     */
-    protected function getModelKeyColumnName()
-    {
-        return config('inventory.model_primary_field_attribute') ?? 'inventoriable_id';
-    }
-
-    /**
-     * Return the model class name set on config file, uses to verify model is extending to \IvanSotelo\Inventory\Inventory class.
-     *
-     * @return void
-     */
-    protected function getInventoryModelClassName()
-    {
-        return config('inventory.inventory_model');
-    }
 }

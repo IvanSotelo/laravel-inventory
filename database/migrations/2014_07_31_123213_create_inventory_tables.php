@@ -18,6 +18,7 @@ class CreateInventoryTable extends Migration
             $table->index(['inventoriable_type', 'inventoriable_id']);
 
             $table->integer('location_id')->unsigned();
+            $table->integer('metric_id')->unsigned()->nullable();
             $table->decimal('quantity', 8, 2)->default(0);
             $table->text('description')->nullable();
             $table->string('aisle')->nullable();
@@ -38,6 +39,10 @@ class CreateInventoryTable extends Migration
                 ->onUpdate('restrict')
                 ->onDelete('cascade');
 
+            $table->foreign('metric_id')->references('id')->on('metrics')
+                ->onUpdate('restrict')
+                ->onDelete('cascade');
+
             $table->softDeletes();
             $table->timestamps();
         });
@@ -47,7 +52,7 @@ class CreateInventoryTable extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->integer('inventory_id')->unsigned();
+            $table->integer('stock_id')->unsigned();
             $table->integer('user_id')->unsigned()->nullable();
             $table->decimal('before', 8, 2)->default(0);
             $table->decimal('after', 8, 2)->default(0);
@@ -56,7 +61,7 @@ class CreateInventoryTable extends Migration
             $table->string('reason')->nullable();
             $table->boolean('returned')->default(0);
 
-            $table->foreign('inventory_id')->references('id')->on('inventories')
+            $table->foreign('stock_id')->references('id')->on('inventory_stocks')
                 ->onUpdate('restrict')
                 ->onDelete('cascade');
 
