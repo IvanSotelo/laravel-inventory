@@ -4,8 +4,8 @@ namespace IvanSotelo\Inventory\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Schema\Blueprint;
-use IvanSotelo\Inventory\Models\InventoryStock;
 use IvanSotelo\Inventory\InventoryServiceProvider;
+use IvanSotelo\Inventory\Models\InventoryStock;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra

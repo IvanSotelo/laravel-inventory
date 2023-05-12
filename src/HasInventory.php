@@ -5,8 +5,8 @@ namespace IvanSotelo\Inventory;
 use Illuminate\Database\Eloquent\Model;
 use IvanSotelo\Inventory\Events\InventoryUpdate;
 use IvanSotelo\Inventory\Exeptions\InvalidInventory;
-use IvanSotelo\Inventory\Models\Location;
 use IvanSotelo\Inventory\Models\InventoryStock;
+use IvanSotelo\Inventory\Models\Location;
 
 trait HasInventory
 {
@@ -37,20 +37,18 @@ trait HasInventory
      */
     public function isInStock()
     {
-        return ($this->getTotalStock() > 0 ? true : false);
+        return $this->getTotalStock() > 0 ? true : false;
     }
 
     /**
      * Creates a stock record to the current inventory item.
      *
-     * @param int|float|string $quantity
-     * @param Model            $location
-     * @param string           $reason
-     * @param int|float|string $cost
-     * @param string           $aisle
-     * @param string           $row
-     * @param string           $bin
-     *
+     * @param  int|float|string  $quantity
+     * @param  string  $reason
+     * @param  int|float|string  $cost
+     * @param  string  $aisle
+     * @param  string  $row
+     * @param  string  $bin
      * @return Model
      */
     public function createStockOnLocation($quantity, Model $location, $reason = '', $cost = 0, $serial = null, $aisle = null, $row = null, $bin = null)
@@ -65,7 +63,7 @@ trait HasInventory
          $stock->setAttribute('row', $row);
          $stock->setAttribute('bin', $bin);
 
-         if($stock->save() && $quantity > 0) {
+         if ($stock->save() && $quantity > 0) {
              return $stock->put($quantity, $reason, $cost, null, null, $serial);
          }
 
@@ -194,6 +192,4 @@ trait HasInventory
 
         return $newStock >= 0 ? $this->setInventory($newStock) : true;
     }
-
-
 }
