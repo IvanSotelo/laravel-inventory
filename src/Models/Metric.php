@@ -6,15 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Metric extends Model
 {
-  protected $table = 'metrics';
+    protected $table = 'metrics';
 
-  /**
-   * The hasMany inventory items relationship.
-   *
-   * @return \Illuminate\Database\Eloquent\Relations\HasMany
-   */
-  public function stocks()
-  {
-    return $this->hasMany(InventoryStock::class);
-  }
+    /**
+     * The hasMany inventory items relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function stocks()
+    {
+        return $this->hasMany(InventoryStock::class);
+    }
 }

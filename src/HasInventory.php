@@ -53,19 +53,19 @@ trait HasInventory
      */
     public function createStockOnLocation($quantity, Model $location, $reason = '', $cost = 0, $serial = null, $aisle = null, $row = null, $bin = null)
     {
-         // A stock record wasn't found on this location, we'll create one.
-         $stock = $this->stocks()->getRelated()->newInstance();
+        // A stock record wasn't found on this location, we'll create one.
+        $stock = $this->stocks()->getRelated()->newInstance();
 
-         $stock->setAttribute('inventory_id', $this->getKey());
-         $stock->setAttribute('location_id', $location->getKey());
-         $stock->setAttribute('quantity', 0);
-         $stock->setAttribute('aisle', $aisle);
-         $stock->setAttribute('row', $row);
-         $stock->setAttribute('bin', $bin);
+        $stock->setAttribute('inventory_id', $this->getKey());
+        $stock->setAttribute('location_id', $location->getKey());
+        $stock->setAttribute('quantity', 0);
+        $stock->setAttribute('aisle', $aisle);
+        $stock->setAttribute('row', $row);
+        $stock->setAttribute('bin', $bin);
 
-         if ($stock->save() && $quantity > 0) {
-             return $stock->put($quantity, $reason, $cost, null, null, $serial);
-         }
+        if ($stock->save() && $quantity > 0) {
+            return $stock->put($quantity, $reason, $cost, null, null, $serial);
+        }
 
         return false;
     }
