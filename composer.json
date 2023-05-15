@@ -1,6 +1,7 @@
 {
     "name": "cmanzanocontrolla/laravel-inventory",
     "description": "Inventory Management for Laravel",
+    "repositories": [ { "type": "composer", "url": "https://github.com/cmanzanocontrolla/laravel-inventory" } ],
     "keywords": [
         "cmanzanocontrolla",
         "laravel-inventory"
