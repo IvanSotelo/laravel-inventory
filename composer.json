@@ -1,16 +1,16 @@
 {
-    "name": "ivansotelo/laravel-inventory",
+    "name": "cmanzanocontrolla/laravel-inventory",
     "description": "Inventory Management for Laravel",
     "keywords": [
-        "ivansotelo",
+        "cmanzanocontrolla",
         "laravel-inventory"
     ],
-    "homepage": "https://github.com/ivansotelo/laravel-inventory",
+    "homepage": "https://github.com/cmanzanocontrolla/laravel-inventory",
     "license": "MIT",
     "authors": [
         {
-            "name": "Ivan Sotelo",
-            "email": "isotelo@controlla.com.mx",
+            "name": "casandra manzano",
+            "email": "cmanzano@controlla.com.mx",
             "role": "Developer"
         }
     ],
@@ -29,13 +29,13 @@
     },
     "autoload": {
         "psr-4": {
-            "IvanSotelo\\Inventory\\": "src",
-            "IvanSotelo\\Inventory\\Database\\Factories\\": "database/factories"
+            "cmanzanocontrolla\\Inventory\\": "src",
+            "cmanzanocontrolla\\Inventory\\Database\\Factories\\": "database/factories"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "IvanSotelo\\Inventory\\Tests\\": "tests"
+            "cmanzanocontrolla\\Inventory\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -50,10 +50,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "IvanSotelo\\Inventory\\InventoryServiceProvider"
+                "cmanzanocontrolla\\Inventory\\InventoryServiceProvider"
             ],
             "aliases": {
-                "Inventory": "IvanSotelo\\Inventory\\InventoryFacade"
+                "Inventory": "cmanzanocontrolla\\Inventory\\InventoryFacade"
             }
         }
     },
