@@ -91,7 +91,7 @@ trait HasInventory
      * @param  string  $description
      * @return \IvanSotelo\Inventory\InventoryStock
      */
-    public function add(int $addQuantity = 1, Location $location = null)
+    public function add(int $addQuantity = 1, string $description = null)
     {
         if (! $this->isValidQuantity($addQuantity, $description)) {
             throw InvalidInventory::value($quantity);
