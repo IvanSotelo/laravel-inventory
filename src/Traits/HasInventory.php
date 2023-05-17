@@ -75,7 +75,6 @@ trait HasInventory
      * @param  int|float|string  $quantity
      * @param  string  $reason
      * @return array
-     *
      */
     public function takeFromLocation($quantity, Model $location, $reason = '')
     {
@@ -95,7 +94,6 @@ trait HasInventory
      * @param  string  $reason
      * @param  int|float|string  $cost
      * @return array
-     *
      */
     public function putToLocation($quantity, Model $location, $reason = '', $cost = 0)
     {
@@ -113,7 +111,6 @@ trait HasInventory
      *
      *
      * @return mixed
-     *
      */
     public function moveStock(Model $fromLocation, Model $toLocation)
     {
@@ -127,7 +124,6 @@ trait HasInventory
      *
      *
      * @return mixed
-     *
      */
     public function getStockFromLocation(Model $location)
     {
