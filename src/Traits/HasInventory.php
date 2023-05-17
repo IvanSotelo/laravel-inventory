@@ -128,9 +128,9 @@ trait HasInventory
     public function getStockFromLocation(Model $location)
     {
         return $this->stocks()->firstOrCreate([
-            'location_id' => $location->getKey()
-        ],[
-            'location_id' => $location->getKey()
+            'location_id' => $location->getKey(),
+        ], [
+            'location_id' => $location->getKey(),
         ]);
     }
 }
