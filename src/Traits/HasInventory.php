@@ -3,8 +3,6 @@
 namespace IvanSotelo\Inventory\Traits;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Lang;
-use IvanSotelo\Inventory\Exceptions\StockNotFoundException;
 use IvanSotelo\Inventory\Models\InventoryStock;
 
 trait HasInventory
@@ -78,7 +76,6 @@ trait HasInventory
      * @param  string  $reason
      * @return array
      *
-     * @throws StockNotFoundException
      */
     public function takeFromLocation($quantity, Model $location, $reason = '')
     {
@@ -99,7 +96,6 @@ trait HasInventory
      * @param  int|float|string  $cost
      * @return array
      *
-     * @throws StockNotFoundException
      */
     public function putToLocation($quantity, Model $location, $reason = '', $cost = 0)
     {
@@ -118,7 +114,6 @@ trait HasInventory
      *
      * @return mixed
      *
-     * @throws StockNotFoundException
      */
     public function moveStock(Model $fromLocation, Model $toLocation)
     {
@@ -133,20 +128,11 @@ trait HasInventory
      *
      * @return mixed
      *
-     * @throws StockNotFoundException
      */
     public function getStockFromLocation(Model $location)
     {
-        $stock = $this->stocks()->where('location_id', $location->getKey())->first();
-
-        if ($stock) {
-            return $stock;
-        } else {
-            $message = Lang::get('inventory::exceptions.StockNotFoundException', [
-                'location' => $location->getAttribute('name'),
-            ]);
-
-            throw new StockNotFoundException($message);
-        }
+       return $this->stocks()->firstOrCreate([
+            'location_id', $location->getKey()
+        ]);
     }
 }
