@@ -35,14 +35,13 @@ trait InventoryStockTrait
     /**
      * Processes a 'take' operation on the current stock.
      *
-     * @param int|float|string $quantity
-     * @param string           $reason
-     * @param int|float|string $cost
+     * @param  int|float|string  $quantity
+     * @param  string  $reason
+     * @param  int|float|string  $cost
+     * @return $this|bool
      *
      * @throws InvalidQuantityException
      * @throws NotEnoughStockException
-     *
-     * @return $this|bool
      */
     public function take($quantity, $reason = '', $cost = 0)
     {
@@ -69,15 +68,14 @@ trait InventoryStockTrait
     /**
      * Processes removing quantity from the current stock.
      *
-     * @param int|float|string $taking
-     * @param string           $reason
-     * @param int|float|string $cost
-     *
+     * @param  int|float|string  $taking
+     * @param  string  $reason
+     * @param  int|float|string  $cost
      * @return $this|bool
      */
     protected function processTakeOperation($taking, $reason = '', $cost = 0)
     {
-        if($this->isValidQuantity($taking) && $this->hasEnoughStock($taking)) {
+        if ($this->isValidQuantity($taking) && $this->hasEnoughStock($taking)) {
             $available = $this->quantity;
 
             $left = (float) $available - (float) $taking;
@@ -87,7 +85,7 @@ trait InventoryStockTrait
              * duplicate movements are allowed. We'll return the current record if
              * they aren't.
              */
-            if ((float) $left === (float) $available && !$this->allowDuplicateMovementsEnabled()) {
+            if ((float) $left === (float) $available && ! $this->allowDuplicateMovementsEnabled()) {
                 return $this;
             }
 
