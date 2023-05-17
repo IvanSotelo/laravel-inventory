@@ -31,6 +31,23 @@ trait InventoryStockTrait
     public $cost = 0;
 
     /**
+     * Processes a 'take' operation on the current stock.
+     *
+     * @param int|float|string $quantity
+     * @param string           $reason
+     * @param int|float|string $cost
+     *
+     * @throws InvalidQuantityException
+     * @throws NotEnoughStockException
+     *
+     * @return $this|bool
+     */
+    public function take($quantity, $reason = '', $cost = 0, $receiver_id = null, $receiver_type = null, $serial = null)
+    {
+        return $this->processTakeOperation($quantity, $reason, $cost, $receiver_id, $receiver_type, $serial);
+    }
+
+    /**
      * Processes a 'put' operation on the current stock.
      *
      * @param  int|float|string  $quantity
@@ -45,6 +62,56 @@ trait InventoryStockTrait
         if ($this->isValidQuantity($quantity)) {
             return $this->processPutOperation($quantity, $reason, $cost);
         }
+    }
+
+    /**
+     * Processes removing quantity from the current stock.
+     *
+     * @param int|float|string $taking
+     * @param string           $reason
+     * @param int|float|string $cost
+     *
+     * @return $this|bool
+     */
+    protected function processTakeOperation($taking, $reason = '', $cost = 0)
+    {
+        if($this->isValidQuantity($taking) && $this->hasEnoughStock($taking)) {
+            $available = $this->quantity;
+
+            $left = (float) $available - (float) $taking;
+
+            /*
+             * If the updated total and the beginning total are the same, we'll check if
+             * duplicate movements are allowed. We'll return the current record if
+             * they aren't.
+             */
+            if ((float) $left === (float) $available && !$this->allowDuplicateMovementsEnabled()) {
+                return $this;
+            }
+
+            $this->quantity = $left;
+
+            $this->setReason($reason);
+
+            $this->setCost($cost);
+
+            $this->dbStartTransaction();
+            try {
+                if ($this->save()) {
+                    $this->dbCommitTransaction();
+
+                    $this->fireEvent('inventory.stock.taken', [
+                        'stock' => $this,
+                    ]);
+
+                    return $this;
+                }
+            } catch (\Exception $e) {
+                $this->dbRollbackTransaction();
+            }
+        }
+
+        return false;
     }
 
     /**
