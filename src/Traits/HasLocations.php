@@ -15,5 +15,4 @@ trait HasLocations
     {
         return $this->morphMany(Location::class, 'locationable')->latest('id');
     }
-    
 }
