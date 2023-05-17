@@ -55,7 +55,7 @@ trait InventoryStockTrait
      * @param  int|float|string  $cost
      * @return $this|bool
      */
-    protected function processPutOperation($putting, $reason = '', $cost = 0, $receiver_id = null, $receiver_type = null, $serial = null)
+    protected function processPutOperation($putting, $reason = '', $cost = 0)
     {
         if ($this->isValidQuantity($putting)) {
             $current = $this->quantity;
