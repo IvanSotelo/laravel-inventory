@@ -2,9 +2,9 @@
 
 namespace IvanSotelo\Inventory\Traits;
 
-use IvanSotelo\Inventory\Exceptions\NotEnoughStockException;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Lang;
+use IvanSotelo\Inventory\Exceptions\NotEnoughStockException;
 
 trait InventoryStockTrait
 {
@@ -197,11 +197,10 @@ trait InventoryStockTrait
      * Returns true if there is enough stock for the specified quantity being taken.
      * Throws NotEnoughStockException otherwise.
      *
-     * @param int|float|string $quantity
+     * @param  int|float|string  $quantity
+     * @return bool
      *
      * @throws NotEnoughStockException
-     *
-     * @return bool
      */
     public function hasEnoughStock($quantity = 0)
     {
