@@ -16,7 +16,7 @@ class InventoryStock extends Model
      */
     protected $table = 'inventory_stocks';
 
-    protected $fillable = ['quantity', 'inventoriable_type', 'inventoriable_id'];
+    protected $fillable = ['quantity', 'inventoriable_type', 'inventoriable_id', 'location_id'];
 
     /**
      * Relationship.

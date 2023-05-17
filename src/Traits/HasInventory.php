@@ -129,8 +129,6 @@ trait HasInventory
     {
         return $this->stocks()->firstOrCreate([
             'location_id' => $location->getKey()
-        ],[
-            'location_id' => $location->getKey()
         ]);
     }
 }
