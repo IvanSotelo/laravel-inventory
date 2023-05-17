@@ -11,6 +11,11 @@ trait InventoryStockTrait
      */
     use DatabaseTransactionTrait;
 
+    /*
+     * Verification helper functions
+     */
+    use VerifyTrait;
+
     /**
      * Stores the reason for updating / creating a stock.
      *
