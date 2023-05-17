@@ -2,7 +2,9 @@
 
 namespace IvanSotelo\Inventory\Traits;
 
+use IvanSotelo\Inventory\Exceptions\NotEnoughStockException;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Lang;
 
 trait InventoryStockTrait
 {
@@ -42,9 +44,9 @@ trait InventoryStockTrait
      *
      * @return $this|bool
      */
-    public function take($quantity, $reason = '', $cost = 0, $receiver_id = null, $receiver_type = null, $serial = null)
+    public function take($quantity, $reason = '', $cost = 0)
     {
-        return $this->processTakeOperation($quantity, $reason, $cost, $receiver_id, $receiver_type, $serial);
+        return $this->processTakeOperation($quantity, $reason, $cost);
     }
 
     /**
@@ -191,5 +193,31 @@ trait InventoryStockTrait
     private function allowDuplicateMovementsEnabled()
     {
         return Config::get('inventory.allow_duplicate_movements');
+    }
+
+    /**
+     * Returns true if there is enough stock for the specified quantity being taken.
+     * Throws NotEnoughStockException otherwise.
+     *
+     * @param int|float|string $quantity
+     *
+     * @throws NotEnoughStockException
+     *
+     * @return bool
+     */
+    public function hasEnoughStock($quantity = 0)
+    {
+        $available = $this->quantity;
+
+        if ((float) $available === (float) $quantity || $available > $quantity) {
+            return true;
+        }
+
+        $message = Lang::get('inventory::exceptions.NotEnoughStockException', [
+            'quantity' => $quantity,
+            'available' => $available,
+        ]);
+
+        throw new NotEnoughStockException($message);
     }
 }
