@@ -2,8 +2,8 @@
 
 namespace IvanSotelo\Inventory\Traits;
 
-use IvanSotelo\Inventory\Exceptions\InvalidQuantityException;
 use Illuminate\Support\Facades\Lang;
+use IvanSotelo\Inventory\Exceptions\InvalidQuantityException;
 
 /**
  * Trait VerifyTrait.
@@ -14,11 +14,10 @@ trait VerifyTrait
      * Returns true if the specified quantity is valid, throws
      * InvalidQuantityException otherwise.
      *
-     * @param int|float|string $quantity
+     * @param  int|float|string  $quantity
+     * @return bool
      *
      * @throws InvalidQuantityException
-     *
-     * @return bool
      */
     public function isValidQuantity($quantity)
     {
@@ -36,8 +35,7 @@ trait VerifyTrait
     /**
      * Returns true/false if the number specified is numeric.
      *
-     * @param int|float|string $number
-     *
+     * @param  int|float|string  $number
      * @return bool
      */
     private function isNumeric($number)
@@ -48,14 +46,13 @@ trait VerifyTrait
     /**
      * Returns true or false if the number inserted is positive.
      *
-     * @param int|float|string $number
-     *
+     * @param  int|float|string  $number
      * @return bool
      */
     private function isPositive($number)
     {
         if ($this->isNumeric($number)) {
-            return ($number >= 0 ? true : false);
+            return $number >= 0 ? true : false;
         }
 
         return false;
@@ -65,8 +62,7 @@ trait VerifyTrait
      * Returns true/false if the specified model is a subclass
      * of the Eloquent Model.
      *
-     * @param mixed $model
-     *
+     * @param  mixed  $model
      * @return bool
      */
     private function isModel($model)

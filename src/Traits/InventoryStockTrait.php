@@ -28,13 +28,12 @@ trait InventoryStockTrait
     /**
      * Processes a 'put' operation on the current stock.
      *
-     * @param int|float|string $quantity
-     * @param string           $reason
-     * @param int|float|string $cost
+     * @param  int|float|string  $quantity
+     * @param  string  $reason
+     * @param  int|float|string  $cost
+     * @return $this
      *
      * @throws InvalidQuantityException
-     *
-     * @return $this
      */
     public function put($quantity, $reason = '', $cost = 0)
     {
@@ -46,29 +45,28 @@ trait InventoryStockTrait
     /**
      * Processes adding quantity to current stock.
      *
-     * @param int|float|string $putting
-     * @param string           $reason
-     * @param int|float|string $cost
-     *
+     * @param  int|float|string  $putting
+     * @param  string  $reason
+     * @param  int|float|string  $cost
      * @return $this|bool
      */
     protected function processPutOperation($putting, $reason = '', $cost = 0, $receiver_id = null, $receiver_type = null, $serial = null)
     {
-        if($this->isValidQuantity($putting)) {
+        if ($this->isValidQuantity($putting)) {
             $current = $this->quantity;
 
             $total = (float) $putting + (float) $current;
 
             // If the updated total and the beginning total are the same,
             // we'll check if duplicate movements are allowed.
-            if ((float) $total === (float) $current && !$this->allowDuplicateMovementsEnabled()) {
+            if ((float) $total === (float) $current && ! $this->allowDuplicateMovementsEnabled()) {
                 return $this;
             }
 
             $this->quantity = $total;
 
             $this->setReason($reason);
-          
+
             $this->setCost($cost);
 
             $this->dbStartTransaction();
@@ -94,7 +92,7 @@ trait InventoryStockTrait
     /**
      * Sets the cost attribute.
      *
-     * @param int|float|string $cost
+     * @param  int|float|string  $cost
      */
     private function setCost($cost = 0)
     {
@@ -104,7 +102,7 @@ trait InventoryStockTrait
     /**
      * Sets the reason attribute.
      *
-     * @param string $reason
+     * @param  string  $reason
      */
     private function setReason($reason = '')
     {
@@ -122,5 +120,4 @@ trait InventoryStockTrait
     {
         return Config::get('inventory.allow_duplicate_movements');
     }
-
 }

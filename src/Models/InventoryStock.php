@@ -8,6 +8,7 @@ use IvanSotelo\Inventory\Traits\InventoryStockTrait;
 class InventoryStock extends Model
 {
     use InventoryStockTrait;
+
     /**
      * The inventories table.
      *
@@ -46,5 +47,4 @@ class InventoryStock extends Model
     {
         return $this->hasOne(Location::class);
     }
-
 }

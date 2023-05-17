@@ -3,9 +3,9 @@
 namespace IvanSotelo\Inventory\Traits;
 
 use Illuminate\Database\Eloquent\Model;
-use IvanSotelo\Inventory\Models\InventoryStock;
-use IvanSotelo\Inventory\Exceptions\StockNotFoundException;
 use Illuminate\Support\Facades\Lang;
+use IvanSotelo\Inventory\Exceptions\StockNotFoundException;
+use IvanSotelo\Inventory\Models\InventoryStock;
 
 trait HasInventory
 {
@@ -52,7 +52,7 @@ trait HasInventory
      */
     public function createStockOnLocation($quantity, Model $location, $reason = '', $cost = 0, $serial = null, $aisle = null, $row = null, $bin = null)
     {
-        /* 
+        /*
         * We'll perform a create so a 'first' movement is generated
         */
         $stock = $this->stocks()->create([
@@ -61,7 +61,7 @@ trait HasInventory
             'quantity' => 0,
             'aisle' => $aisle,
             'row' => $row,
-            'bin' => $bin
+            'bin' => $bin,
         ]);
 
         if ($quantity > 0) {
@@ -74,13 +74,11 @@ trait HasInventory
     /**
      * Takes the specified amount ($quantity) of stock from specified stock location.
      *
-     * @param int|float|string $quantity
-     * @param Model            $location
-     * @param string           $reason
+     * @param  int|float|string  $quantity
+     * @param  string  $reason
+     * @return array
      *
      * @throws StockNotFoundException
-     *
-     * @return array
      */
     public function takeFromLocation($quantity, Model $location, $reason = '')
     {
@@ -96,14 +94,12 @@ trait HasInventory
     /**
      * Puts the specified amount ($quantity) of stock into the specified stock location.
      *
-     * @param int|float|string $quantity
-     * @param Model            $location
-     * @param string           $reason
-     * @param int|float|string $cost
+     * @param  int|float|string  $quantity
+     * @param  string  $reason
+     * @param  int|float|string  $cost
+     * @return array
      *
      * @throws StockNotFoundException
-     *
-     * @return array
      */
     public function putToLocation($quantity, Model $location, $reason = '', $cost = 0)
     {
@@ -119,12 +115,10 @@ trait HasInventory
     /**
      * Moves a stock from one location to another.
      *
-     * @param Model $fromLocation
-     * @param Model $toLocation
-     *
-     * @throws StockNotFoundException
      *
      * @return mixed
+     *
+     * @throws StockNotFoundException
      */
     public function moveStock(Model $fromLocation, Model $toLocation)
     {
@@ -136,11 +130,10 @@ trait HasInventory
     /**
      * Retrieves an inventory stock from a given location.
      *
-     * @param Model $location
-     *
-     * @throws StockNotFoundException
      *
      * @return mixed
+     *
+     * @throws StockNotFoundException
      */
     public function getStockFromLocation(Model $location)
     {
@@ -156,5 +149,4 @@ trait HasInventory
             throw new StockNotFoundException($message);
         }
     }
-    
 }

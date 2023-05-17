@@ -13,9 +13,8 @@ trait DatabaseTransactionTrait
     /**
      * Alias for firing events easily that implement this trait.
      *
-     * @param string $name
-     * @param array  $args
-     *
+     * @param  string  $name
+     * @param  array  $args
      * @return mixed
      */
     protected function fireEvent($name, $args = [])
