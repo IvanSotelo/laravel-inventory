@@ -5,6 +5,7 @@ namespace IvanSotelo\Inventory\Traits;
 use IvanSotelo\Inventory\Exceptions\NotEnoughStockException;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Lang;
+use Illuminate\Database\Eloquent\Model;
 
 trait InventoryStockTrait
 {
@@ -31,6 +32,55 @@ trait InventoryStockTrait
      * @var int|float|string
      */
     public $cost = 0;
+
+    /**
+     * Stores the quantity before an update.
+     *
+     * @var int|float|string
+     */
+    protected $beforeQuantity = 0;
+
+    /**
+     * Overrides the models boot function to set
+     * the user ID automatically to every new record.
+     */
+    public static function bootInventoryStockTrait()
+    {
+        static::creating(function (Model $model) {
+            $model->user_id = $model->getCurrentUserId();
+
+            /*
+             * Check if a reason has been set, if not
+             * let's retrieve the default first entry reason
+             */
+            if (!$model->reason) {
+                $model->reason = Lang::get('inventory::reasons.first_record');
+            }
+        });
+
+        static::created(function (Model $model) {
+            $this->generateStockMovement(0, $this->quantity, $this->reason, $this->cost);
+        });
+
+        static::updating(function (Model $model) {
+            /*
+             * Retrieve the original quantity before it was updated,
+             * so we can create generate an update with it
+             */
+            $model->beforeQuantity = $model->getOriginal('quantity');
+
+            /*
+             * Check if a reason has been set, if not let's retrieve the default change reason
+             */
+            if (!$model->reason) {
+                $model->reason = Lang::get('inventory::reasons.change');
+            }
+        });
+
+        static::updated(function (Model $model) {
+            $this->generateStockMovement($this->beforeQuantity, $this->quantity, $this->reason, $this->cost);
+        });
+    }
 
     /**
      * Processes a 'take' operation on the current stock.
@@ -159,6 +209,28 @@ trait InventoryStockTrait
         }
 
         return false;
+    }
+
+    /**
+     * Creates a new stock movement record.
+     *
+     * @param int|float|string $before
+     * @param int|float|string $after
+     * @param string           $reason
+     * @param int|float|string $cost
+     *
+     * @return \Illuminate\Database\Eloquent\Model
+     */
+    private function generateStockMovement($before, $after, $reason = '', $cost = 0)
+    {
+        $insert = [
+            'before' => $before,
+            'after' => $after,
+            'reason' => $reason,
+            'cost' => $cost,
+        ];
+
+        return $this->movements()->create($insert);
     }
 
     /**
