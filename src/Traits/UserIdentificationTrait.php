@@ -28,7 +28,7 @@ trait UserIdentificationTrait
          * Check if we're allowed to return no user ID to the model, if so we'll return NULL
          */
         if (Config::get('inventory::allow_no_user')) {
-            return;
+            return null;
         }
 
         if (Auth::check()) {

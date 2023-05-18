@@ -52,23 +52,23 @@ trait InventoryStockTrait
      */
     public static function bootInventoryStockTrait()
     {
-        static::creating(function (Model $model) {
-            $model->user_id = $model->getCurrentUserId();
+        static::creating(function ($model) {
+            $model->setAttribute('user_id', $model->getCurrentUserId());
 
             /*
              * Check if a reason has been set, if not
              * let's retrieve the default first entry reason
              */
-            if (! $model->reason) {
+            if (! $model->getAttribute('reason')) {
                 $model->reason = Lang::get('inventory::reasons.first_record');
             }
         });
 
-        static::created(function (Model $model) {
-            $this->generateStockMovement(0, $model->quantity, $model->reason, $model->cost);
+        static::created(function ($model) {
+            $model->postCreate();
         });
 
-        static::updating(function (Model $model) {
+        static::updating(function ($model) {
             /*
              * Retrieve the original quantity before it was updated,
              * so we can create generate an update with it
@@ -83,9 +83,29 @@ trait InventoryStockTrait
             }
         });
 
-        static::updated(function (Model $model) {
-            $this->generateStockMovement($model->beforeQuantity, $model->quantity, $model->reason, $model->cost);
+        static::updated(function ($model) {
+            $model->postUpdate();
         });
+    }
+
+    /**
+     * Generates a stock movement after a stock is created.
+     *
+     * @return void
+     */
+    public function postCreate()
+    {
+        $this->generateStockMovement(0, $this->getAttribute('quantity'), $this->reason, $this->cost);
+    }
+
+    /**
+     * Generates a stock movement after a stock is updated.
+     *
+     * @return void
+     */
+    public function postUpdate()
+    {
+        $this->generateStockMovement($this->beforeQuantity, $this->getAttribute('quantity'), $this->reason, $this->cost);
     }
 
     /**
@@ -95,9 +115,6 @@ trait InventoryStockTrait
      * @param  string  $reason
      * @param  int|float|string  $cost
      * @return $this|bool
-     *
-     * @throws InvalidQuantityException
-     * @throws NotEnoughStockException
      */
     public function take($quantity, $reason = '', $cost = 0)
     {
@@ -111,14 +128,10 @@ trait InventoryStockTrait
      * @param  string  $reason
      * @param  int|float|string  $cost
      * @return $this
-     *
-     * @throws InvalidQuantityException
      */
     public function put($quantity, $reason = '', $cost = 0)
     {
-        if ($this->isValidQuantity($quantity)) {
-            return $this->processPutOperation($quantity, $reason, $cost);
-        }
+        return $this->processPutOperation($quantity, $reason, $cost);
     }
 
     /**
@@ -143,7 +156,7 @@ trait InventoryStockTrait
     protected function processTakeOperation($taking, $reason = '', $cost = 0)
     {
         if ($this->isValidQuantity($taking) && $this->hasEnoughStock($taking)) {
-            $available = $this->quantity;
+            $available = $this->getAttribute('quantity');
 
             $left = (float) $available - (float) $taking;
 
@@ -156,7 +169,7 @@ trait InventoryStockTrait
                 return $this;
             }
 
-            $this->quantity = $left;
+            $this->setAttribute('quantity', $left);
 
             $this->setReason($reason);
 
@@ -192,7 +205,7 @@ trait InventoryStockTrait
     protected function processPutOperation($putting, $reason = '', $cost = 0)
     {
         if ($this->isValidQuantity($putting)) {
-            $current = $this->quantity;
+            $current = $this->getAttribute('quantity');
 
             $total = (float) $putting + (float) $current;
 
@@ -202,7 +215,7 @@ trait InventoryStockTrait
                 return $this;
             }
 
-            $this->quantity = $total;
+            $this->setAttribute('quantity', $total);
 
             $this->setReason($reason);
 
@@ -232,12 +245,11 @@ trait InventoryStockTrait
      * Processes the stock moving from it's current
      * location, to the specified location.
      *
-     * @param  mixed  $location
      * @return bool
      */
     private function processMoveOperation(Model $location)
     {
-        $this->location_id = $location->getKey();
+        $this->setAttribute('location_id', $location->getKey());
 
         $this->dbStartTransaction();
 
@@ -249,7 +261,7 @@ trait InventoryStockTrait
                     'stock' => $this,
                 ]);
 
-                return $this;
+                return true;
             }
         } catch (\Exception $e) {
             $this->dbRollbackTransaction();
@@ -322,7 +334,7 @@ trait InventoryStockTrait
      */
     public function hasEnoughStock($quantity = 0)
     {
-        $available = $this->quantity;
+        $available = $this->getAttribute('quantity');
 
         if ((float) $available === (float) $quantity || $available > $quantity) {
             return true;
