@@ -19,7 +19,7 @@ return [
 
     'NotEnoughStockException' => 'Not enough stock. Tried to take :quantity but only :available is available',
 
-    'NoUserLoggedInException' => 'Cannot retrieve user ID',
+    'NoUserLoggedInException' => 'No se puede recuperar la ID de usuario',
 
     'StockAlreadyExistsException' => 'Stock already exists on location :location',
 

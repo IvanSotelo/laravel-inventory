@@ -19,6 +19,12 @@ trait InventoryStockTrait
      */
     use VerifyTrait;
 
+    /*
+     * Set's the models constructor method to automatically assign the
+     * user_id's attribute to the current logged in user
+     */
+    use UserIdentificationTrait;
+
     /**
      * Stores the reason for updating / creating a stock.
      *
