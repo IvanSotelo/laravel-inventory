@@ -2,9 +2,9 @@
 
 namespace IvanSotelo\Inventory\Traits;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Lang;
-use Illuminate\Database\Eloquent\Model;
 use IvanSotelo\Inventory\Exceptions\NotEnoughStockException;
 
 trait InventoryStockTrait
@@ -59,7 +59,7 @@ trait InventoryStockTrait
              * Check if a reason has been set, if not
              * let's retrieve the default first entry reason
              */
-            if (!$model->reason) {
+            if (! $model->reason) {
                 $model->reason = Lang::get('inventory::reasons.first_record');
             }
         });
@@ -78,7 +78,7 @@ trait InventoryStockTrait
             /*
              * Check if a reason has been set, if not let's retrieve the default change reason
              */
-            if (!$model->reason) {
+            if (! $model->reason) {
                 $model->reason = Lang::get('inventory::reasons.change');
             }
         });
@@ -263,11 +263,10 @@ trait InventoryStockTrait
     /**
      * Creates a new stock movement record.
      *
-     * @param int|float|string $before
-     * @param int|float|string $after
-     * @param string           $reason
-     * @param int|float|string $cost
-     *
+     * @param  int|float|string  $before
+     * @param  int|float|string  $after
+     * @param  string  $reason
+     * @param  int|float|string  $cost
      * @return \Illuminate\Database\Eloquent\Model
      */
     private function generateStockMovement($before, $after, $reason = '', $cost = 0)

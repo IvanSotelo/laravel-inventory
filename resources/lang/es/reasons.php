@@ -36,5 +36,5 @@ return [
 
         'cancelled' => 'Cancellation occurred on Transaction ID :id on :date',
     ],
-    
+
 ];
