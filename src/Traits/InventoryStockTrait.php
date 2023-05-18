@@ -124,7 +124,6 @@ trait InventoryStockTrait
     /**
      * Moves a stock to the specified location.
      *
-     * @param Model $location
      *
      * @return bool
      */
@@ -233,8 +232,7 @@ trait InventoryStockTrait
      * Processes the stock moving from it's current
      * location, to the specified location.
      *
-     * @param mixed $location
-     *
+     * @param  mixed  $location
      * @return bool
      */
     private function processMoveOperation(Model $location)

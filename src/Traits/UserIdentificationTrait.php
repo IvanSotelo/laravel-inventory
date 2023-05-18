@@ -2,10 +2,10 @@
 
 namespace IvanSotelo\Inventory\Traits;
 
-use IvanSotelo\Inventory\Exceptions\NoUserLoggedInException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Lang;
+use IvanSotelo\Inventory\Exceptions\NoUserLoggedInException;
 
 /**
  * Trait UserIdentificationTrait.
@@ -18,9 +18,9 @@ trait UserIdentificationTrait
      *
      * Thanks to https://github.com/VentureCraft/revisionable/blob/master/src/Venturecraft/Revisionable/RevisionableTrait.php
      *
-     * @throws NoUserLoggedInException
-     *
      * @return int|string|null
+     *
+     * @throws NoUserLoggedInException
      */
     protected static function getCurrentUserId()
     {
@@ -32,7 +32,7 @@ trait UserIdentificationTrait
         }
 
         if (Auth::check()) {
-          return Auth::user()->getAuthIdentifier();
+            return Auth::user()->getAuthIdentifier();
         }
 
         /*
