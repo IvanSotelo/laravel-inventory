@@ -122,6 +122,18 @@ trait InventoryStockTrait
     }
 
     /**
+     * Moves a stock to the specified location.
+     *
+     * @param Model $location
+     *
+     * @return bool
+     */
+    public function moveTo(Model $location)
+    {
+        return $this->processMoveOperation($location);
+    }
+
+    /**
      * Processes removing quantity from the current stock.
      *
      * @param  int|float|string  $taking
@@ -212,6 +224,37 @@ trait InventoryStockTrait
             } catch (\Exception $e) {
                 $this->dbRollbackTransaction();
             }
+        }
+
+        return false;
+    }
+
+    /**
+     * Processes the stock moving from it's current
+     * location, to the specified location.
+     *
+     * @param mixed $location
+     *
+     * @return bool
+     */
+    private function processMoveOperation(Model $location)
+    {
+        $this->location_id = $location->getKey();
+
+        $this->dbStartTransaction();
+
+        try {
+            if ($this->save()) {
+                $this->dbCommitTransaction();
+
+                $this->fireEvent('inventory.stock.moved', [
+                    'stock' => $this,
+                ]);
+
+                return $this;
+            }
+        } catch (\Exception $e) {
+            $this->dbRollbackTransaction();
         }
 
         return false;
