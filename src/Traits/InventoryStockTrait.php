@@ -65,7 +65,7 @@ trait InventoryStockTrait
         });
 
         static::created(function (Model $model) {
-            $this->generateStockMovement(0, $this->quantity, $this->reason, $this->cost);
+            $this->generateStockMovement(0, $model->quantity, $model->reason, $model->cost);
         });
 
         static::updating(function (Model $model) {
@@ -84,7 +84,7 @@ trait InventoryStockTrait
         });
 
         static::updated(function (Model $model) {
-            $this->generateStockMovement($this->beforeQuantity, $this->quantity, $this->reason, $this->cost);
+            $this->generateStockMovement($model->beforeQuantity, $model->quantity, $model->reason, $model->cost);
         });
     }
 
