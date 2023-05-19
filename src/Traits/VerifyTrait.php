@@ -2,6 +2,7 @@
 
 namespace IvanSotelo\Inventory\Traits;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Lang;
 use IvanSotelo\Inventory\Exceptions\InvalidQuantityException;
 
@@ -65,8 +66,8 @@ trait VerifyTrait
      * @param  mixed  $model
      * @return bool
      */
-    private function isModel($model)
+    protected function isModel($model)
     {
-        return is_subclass_of($model, 'Illuminate\Database\Eloquent\Model');
+        return $model instanceof Model;
     }
 }

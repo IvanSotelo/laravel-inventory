@@ -5,6 +5,7 @@ namespace IvanSotelo\Inventory\Traits;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Lang;
+use IvanSotelo\Inventory\Exceptions\InvalidMovementException;
 use IvanSotelo\Inventory\Exceptions\NotEnoughStockException;
 
 trait InventoryStockTrait
@@ -146,6 +147,25 @@ trait InventoryStockTrait
     }
 
     /**
+     * Rolls back the last movement, or the movement specified. If recursive is set to true,
+     * it will rollback all movements leading up to the movement specified.
+     *
+     * @param  mixed  $movement
+     * @param  bool  $recursive
+     * @return $this
+     */
+    public function rollback($movement = null, $recursive = false)
+    {
+        if ($movement) {
+            $movement = $this->getMovement($movement);
+        } else {
+            $movement = $this->getLastMovement();
+        }
+
+        return $this->processRollbackOperation($movement, $recursive);
+    }
+
+    /**
      * Processes removing quantity from the current stock.
      *
      * @param  int|float|string  $taking
@@ -271,6 +291,82 @@ trait InventoryStockTrait
     }
 
     /**
+     * Processes a single rollback operation.
+     *
+     * @param  bool  $recursive
+     * @return $this|bool|array
+     */
+    protected function processRollbackOperation(Model $movement, $recursive = false)
+    {
+        if ($recursive) {
+            return $this->processRecursiveRollbackOperation($movement);
+        }
+
+        $amt = $movement->getAttribute('after') - $movement->getAttribute('before');
+        $this->setAttribute('quantity', $this->getAttribute('quantity') - $amt);
+
+        $reason = Lang::get('inventory::reasons.rollback', [
+            'id' => $movement->getOriginal('id'),
+            'date' => $movement->getOriginal('created_at'),
+        ]);
+
+        $this->setReason($reason);
+
+        if ($this->rollbackCostEnabled()) {
+            $this->setCost($movement->getAttribute('cost'));
+
+            $this->reverseCost();
+        }
+
+        $this->dbStartTransaction();
+
+        try {
+            if ($this->save()) {
+                $this->dbCommitTransaction();
+
+                $this->fireEvent('inventory.stock.rollback', [
+                    'stock' => $this,
+                ]);
+
+                return $this;
+            }
+        } catch (\Exception $e) {
+            $this->dbRollbackTransaction();
+        }
+
+        return false;
+    }
+
+    /**
+     * Processes a recursive rollback operation.
+     *
+     *
+     * @return array
+     */
+    protected function processRecursiveRollbackOperation(Model $movement)
+    {
+        /*
+         * Retrieve movements that were created after
+         * the specified movement, and order them descending
+         */
+        $movements = $this
+            ->movements()
+            ->where('created_at', '>=', $movement->getOriginal('created_at'))
+            ->orderBy('created_at', 'DESC')
+            ->get();
+
+        $rollbacks = [];
+
+        if ($movements->count() > 0) {
+            foreach ($movements as $movement) {
+                $rollbacks = $this->processRollbackOperation($movement);
+            }
+        }
+
+        return $rollbacks;
+    }
+
+    /**
      * Creates a new stock movement record.
      *
      * @param  int|float|string  $before
@@ -312,15 +408,17 @@ trait InventoryStockTrait
     }
 
     /**
-     * Returns true/false from the configuration file determining
-     * whether or not stock movements can have the same before and after
-     * quantities.
-     *
-     * @return bool
+     * Reverses the cost of a movement.
      */
-    private function allowDuplicateMovementsEnabled()
+    protected function reverseCost()
     {
-        return Config::get('inventory.allow_duplicate_movements');
+        $cost = $this->getAttribute('cost');
+
+        if ($this->isPositive($cost)) {
+            $this->setCost(-abs($cost));
+        } else {
+            $this->setCost(abs($cost));
+        }
     }
 
     /**
@@ -346,5 +444,80 @@ trait InventoryStockTrait
         ]);
 
         throw new NotEnoughStockException($message);
+    }
+
+    /**
+     * Returns the last movement on the current stock record.
+     *
+     * @return bool|Model
+     */
+    public function getLastMovement()
+    {
+        $movement = $this->movements()->orderBy('created_at', 'DESC')->first();
+
+        if ($movement) {
+            return $movement;
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns a movement depending on the specified argument. If an object is supplied, it is checked if it
+     * is an instance of an eloquent model. If a numeric value is entered, it is retrieved by it's ID.
+     *
+     * @param  int|string|Model  $movement
+     * @return mixed
+     *
+     * @throws InvalidMovementException
+     */
+    public function getMovement($movement)
+    {
+        if ($this->isModel($movement)) {
+            return $movement;
+        } elseif (is_numeric($movement)) {
+            return $this->getMovementById($movement);
+        } else {
+            $message = Lang::get('inventory::exceptions.InvalidMovementException', [
+                'movement' => $movement,
+            ]);
+
+            throw new InvalidMovementException($message);
+        }
+    }
+
+    /**
+     * Retrieves a movement by the specified ID.
+     *
+     * @param  int|string  $id
+     * @return null|Model
+     */
+    protected function getMovementById($id)
+    {
+        return $this->movements()->find($id);
+    }
+
+    /**
+     * Returns true/false from the configuration file determining
+     * whether or not stock movements can have the same before and after
+     * quantities.
+     *
+     * @return bool
+     */
+    private function allowDuplicateMovementsEnabled()
+    {
+        return Config::get('inventory.allow_duplicate_movements');
+    }
+
+    /**
+     * Returns true/false from the configuration file determining
+     * whether or not to rollback costs when a rollback occurs on
+     * a stock.
+     *
+     * @return bool
+     */
+    protected function rollbackCostEnabled()
+    {
+        return Config::get('inventory.rollback_cost');
     }
 }

@@ -35,7 +35,7 @@ class InventoryStock extends Model
      */
     public function movements()
     {
-        return $this->hasMany(InventoryMovement::class, 'inventory_id', 'id');
+        return $this->hasMany(InventoryMovement::class, 'stock_id', 'id');
     }
 
     /**
