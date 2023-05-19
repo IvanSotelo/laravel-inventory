@@ -17,7 +17,7 @@ class Location extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
-    public function model()
+    public function locationable()
     {
         return $this->morphTo();
     }
