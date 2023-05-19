@@ -96,7 +96,7 @@ trait InventoryStockTrait
      */
     public function postCreate()
     {
-        $this->generateStockMovement(0, $this->getAttribute('quantity'), $this->reason, $this->cost);
+        $this->generateStockMovement(0, $this->quantity, $this->reason, $this->cost);
     }
 
     /**
