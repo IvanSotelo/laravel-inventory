@@ -13,6 +13,15 @@ class InventoryMovement extends Model
      */
     protected $table = 'inventory_movements';
 
+    protected $fillable = [
+        'stock_id',
+        'user_id',
+        'before',
+        'after',
+        'cost',
+        'reason',
+    ];
+
     /**
      * The belongsTo stock relationship.
      *
