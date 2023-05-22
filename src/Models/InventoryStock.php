@@ -39,12 +39,12 @@ class InventoryStock extends Model
     }
 
     /**
-     * The hasOne location relationship.
+     * The belongsTo location relationship.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function location()
     {
-        return $this->hasOne(Location::class);
+        return $this->belongsTo(Location::class)->with('locationable');
     }
 }
