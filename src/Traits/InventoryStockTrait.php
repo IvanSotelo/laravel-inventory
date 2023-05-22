@@ -48,6 +48,13 @@ trait InventoryStockTrait
     protected $beforeQuantity = 0;
 
     /**
+     * Stores the quantity before an update.
+     *
+     * @var int|float|string
+     */
+    protected $afterQuantity = 0;
+
+    /**
      * Overrides the models boot function to set
      * the user ID automatically to every new record.
      */
@@ -56,6 +63,7 @@ trait InventoryStockTrait
         static::creating(function ($model) {
             $model->setAttribute('user_id', $model->getCurrentUserId());
 
+            $model->afterQuantity = $model->getAttribute('quantity');
             /*
              * Check if a reason has been set, if not
              * let's retrieve the default first entry reason
@@ -96,7 +104,7 @@ trait InventoryStockTrait
      */
     public function postCreate()
     {
-        $this->generateStockMovement(0, $this->quantity, $this->reason, $this->cost);
+        $this->generateStockMovement(0, $this->afterQuantity, $this->reason, $this->cost);
     }
 
     /**
