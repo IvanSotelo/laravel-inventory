@@ -87,7 +87,7 @@ trait InventoryStockTrait
             /*
              * Check if a reason has been set, if not let's retrieve the default change reason
              */
-            if (!$model->reason) {
+            if (! $model->reason) {
                 $model->reason = $model->getOriginal('quantity') === null ? Lang::get('inventory::reasons.first_record') : Lang::get('inventory::reasons.change');
             }
         });
