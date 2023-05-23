@@ -82,13 +82,13 @@ trait InventoryStockTrait
              * Retrieve the original quantity before it was updated,
              * so we can create generate an update with it
              */
-            $model->beforeQuantity = $model->getOriginal('quantity');
+            $model->beforeQuantity = $model->getOriginal('quantity') ?? 0;
 
             /*
              * Check if a reason has been set, if not let's retrieve the default change reason
              */
-            if (! $model->reason) {
-                $model->reason = Lang::get('inventory::reasons.change');
+            if (!$model->reason) {
+                $model->reason = $model->getOriginal('quantity') === null ? Lang::get('inventory::reasons.first_record') : Lang::get('inventory::reasons.change');
             }
         });
 
