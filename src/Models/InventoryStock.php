@@ -3,9 +3,12 @@
 namespace IvanSotelo\Inventory\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use IvanSotelo\Inventory\Traits\InventoryStockTrait;
 
 class InventoryStock extends Model
 {
+    use InventoryStockTrait;
+
     /**
      * The inventories table.
      *
@@ -13,14 +16,14 @@ class InventoryStock extends Model
      */
     protected $table = 'inventory_stocks';
 
-    protected $fillable = ['quantity', 'inventoriable_type', 'inventoriable_id'];
+    protected $fillable = ['quantity', 'inventoriable_type', 'inventoriable_id', 'location_id'];
 
     /**
      * Relationship.
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
-    public function model()
+    public function inventoriable()
     {
         return $this->morphTo();
     }
@@ -32,21 +35,16 @@ class InventoryStock extends Model
      */
     public function movements()
     {
-        return $this->hasMany(InventoryMovement::class, 'inventory_id', 'id');
+        return $this->hasMany(InventoryMovement::class, 'stock_id', 'id');
     }
 
     /**
-     * The hasOne location relationship.
+     * The belongsTo location relationship.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function location()
     {
-        return $this->hasOne(Location::class);
-    }
-
-    public function __toString()
-    {
-        return $this->name;
+        return $this->belongsTo(Location::class)->with('locationable');
     }
 }

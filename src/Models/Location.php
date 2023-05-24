@@ -13,6 +13,16 @@ class Location extends Model
     ];
 
     /**
+     * Relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     */
+    public function locationable()
+    {
+        return $this->morphTo();
+    }
+
+    /**
      * The hasMany stocks relationship.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

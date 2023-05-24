@@ -13,6 +13,15 @@ class InventoryMovement extends Model
      */
     protected $table = 'inventory_movements';
 
+    protected $fillable = [
+        'stock_id',
+        'user_id',
+        'before',
+        'after',
+        'cost',
+        'reason',
+    ];
+
     /**
      * The belongsTo stock relationship.
      *
@@ -20,6 +29,6 @@ class InventoryMovement extends Model
      */
     public function stock()
     {
-        return $this->belongsTo(InventoryStock::class);
+        return $this->belongsTo(InventoryStock::class)->with('inventoriable', 'location');
     }
 }

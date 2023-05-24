@@ -1,6 +1,6 @@
 <?php
 
-namespace IvanSotelo\Inventory;
+namespace IvanSotelo\Inventory\Traits;
 
 use Illuminate\Support\Facades\Config;
 

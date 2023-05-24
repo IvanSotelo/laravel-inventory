@@ -11,7 +11,7 @@ class InventorySku extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphTo
      */
-    public function model()
+    public function inventoriable()
     {
         return $this->morphTo();
     }
