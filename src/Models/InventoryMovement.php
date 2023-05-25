@@ -31,4 +31,9 @@ class InventoryMovement extends Model
     {
         return $this->belongsTo(InventoryStock::class)->with('inventoriable', 'location');
     }
+
+    public function warehouse()
+    {
+        return $this->belongsTo(Warehouse::class, 'warehouse_id');
+    }
 }

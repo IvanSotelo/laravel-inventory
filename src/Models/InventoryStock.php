@@ -47,4 +47,9 @@ class InventoryStock extends Model
     {
         return $this->belongsTo(Location::class)->with('locationable');
     }
+
+    public function metric()
+    {
+        return $this->belongsTo(Metric::class);
+    }
 }
