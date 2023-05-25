@@ -29,9 +29,14 @@ class InventoryMovement extends Model
      */
     public function stock()
     {
-        return $this->belongsTo(InventoryStock::class)->with('inventoriable', 'location');
+        return $this->belongsTo(InventoryStock::class)->with('location');
     }
 
+    /**
+     * The belongsTo warehouse relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function warehouse()
     {
         return $this->belongsTo(Warehouse::class, 'warehouse_id');

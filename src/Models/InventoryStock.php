@@ -45,9 +45,14 @@ class InventoryStock extends Model
      */
     public function location()
     {
-        return $this->belongsTo(Location::class)->with('locationable');
+        return $this->belongsTo(Location::class)->with('warehouse');
     }
 
+    /**
+     * The belongsTo metric relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function metric()
     {
         return $this->belongsTo(Metric::class);

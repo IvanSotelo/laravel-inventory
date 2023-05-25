@@ -17,13 +17,11 @@ class CreateWarehousesTable extends Migration
 
             $table->string('name');
 
-            $table->foreignId('branch_id')
-            ->onUpdate('restrict')
-            ->onDelete('cascade');
-            /*
-             * This field is for scoping categories, use it if you
-             * want to store multiple nested sets on the same table
-             */
+            $table->string('warehouseable_type');
+            $table->unsignedBigInteger('warehouseable_id');
+            $table->index(['warehouseable_type', 'warehouseable_id']);
+
+            $table->unique(['warehouseable_id']);
         });
     }
 

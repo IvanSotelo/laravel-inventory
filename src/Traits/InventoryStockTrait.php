@@ -390,7 +390,7 @@ trait InventoryStockTrait
             'after' => $after,
             'reason' => $reason,
             'cost' => $cost,
-            'warehouse_id' => $this->location->locationable_id,
+            'warehouse_id' => $this->location->warehouse_id,
         ];
 
         return $this->movements()->create($insert);

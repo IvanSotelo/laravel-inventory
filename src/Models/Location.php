@@ -13,13 +13,13 @@ class Location extends Model
     ];
 
     /**
-     * Relationship.
+     * The belongsTo warehouse relationship.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function locationable()
+    public function warehouse()
     {
-        return $this->morphTo();
+        return $this->belongsTo(Warehouse::class, 'warehouse_id');
     }
 
     /**

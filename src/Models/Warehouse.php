@@ -14,20 +14,30 @@ class Warehouse extends Model
     ];
 
     /**
-     * The hasMany stocks relationship.
+     * Relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphTo
+     */
+    public function warehouseable()
+    {
+        return $this->morphTo();
+    }
+
+    /**
+     * The hasMany locations relationship.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function locations()
     {
-        return $this->morphMany(Location::class, 'locationable');
+        return $this->hasMany(Location::class);
     }
 
-    public function branch()
-    {
-        return $this->belongsTo(Branch::class, 'branch_id');
-    }
-
+    /**
+     * The hasMany movements relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function movements()
     {
         return $this->hasMany(InventoryMovement::class);
