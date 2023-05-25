@@ -73,10 +73,6 @@ trait InventoryStockTrait
             }
         });
 
-        static::created(function ($model) {
-            $model->postCreate();
-        });
-
         static::updating(function ($model) {
             /*
              * Retrieve the original quantity before it was updated,
