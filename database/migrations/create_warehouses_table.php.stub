@@ -1,0 +1,37 @@
+<?php
+
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
+
+class CreateWarehousesTable extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up()
+    {
+        Schema::create('warehouses', function (Blueprint $table) {
+            $table->increments('id');
+            $table->timestamps();
+
+            $table->string('name');
+
+            $table->foreignId('branch_id')
+            ->onUpdate('restrict')
+            ->onDelete('cascade');
+            /*
+             * This field is for scoping categories, use it if you
+             * want to store multiple nested sets on the same table
+             */
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::dropIfExists('warehouses');
+    }
+}

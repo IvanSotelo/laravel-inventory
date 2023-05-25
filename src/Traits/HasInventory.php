@@ -76,10 +76,10 @@ trait HasInventory
      * @param  string  $reason
      * @return array
      */
-    public function takeFromLocation($quantity, Model $location, $reason = '')
+    public function takeFromLocation($quantity, Model $location, $metric_id, $reason = '')
     {
-        $stock = $this->getStockFromLocation($location);
-
+        $stock = $this->getStockFromLocation($location, $metric_id);
+        
         if ($stock && $stock->take($quantity, $reason)) {
             return $this;
         }
@@ -95,10 +95,10 @@ trait HasInventory
      * @param  int|float|string  $cost
      * @return array
      */
-    public function putToLocation($quantity, Model $location, $reason = '', $cost = 0)
+    public function putToLocation($quantity, Model $location, $metric_id, $reason = '', $cost = 0)
     {
-        $stock = $this->getStockFromLocation($location);
-
+        $stock = $this->getStockFromLocation($location, $metric_id);
+        
         if ($stock && $stock->put($quantity, $reason, $cost)) {
             return $this;
         }
@@ -125,10 +125,11 @@ trait HasInventory
      *
      * @return mixed
      */
-    public function getStockFromLocation(Model $location)
+    public function getStockFromLocation(Model $location, $metric_id)
     {
         return $this->stocks()->firstOrCreate([
             'location_id' => $location->getKey(),
+            'metric_id' => $metric_id
         ]);
     }
 }

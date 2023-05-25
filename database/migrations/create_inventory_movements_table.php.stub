@@ -27,6 +27,10 @@ class CreateInventoryMovementsTable extends Migration
                 ->onUpdate('restrict')
                 ->onDelete('cascade');
 
+            $table->foreignId('warehouse_id')
+            ->onUpdate('restrict')
+            ->onDelete('cascade');
+
             $table->foreign('user_id')->references('id')->on('users')
                 ->onUpdate('restrict')
                 ->onDelete('set null');
