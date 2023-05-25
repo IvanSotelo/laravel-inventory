@@ -79,7 +79,7 @@ trait HasInventory
     public function takeFromLocation($quantity, Model $location, $metric_id, $reason = '')
     {
         $stock = $this->getStockFromLocation($location, $metric_id);
-        
+
         if ($stock && $stock->take($quantity, $reason)) {
             return $this;
         }
@@ -98,7 +98,7 @@ trait HasInventory
     public function putToLocation($quantity, Model $location, $metric_id, $reason = '', $cost = 0)
     {
         $stock = $this->getStockFromLocation($location, $metric_id);
-        
+
         if ($stock && $stock->put($quantity, $reason, $cost)) {
             return $this;
         }
@@ -129,7 +129,7 @@ trait HasInventory
     {
         return $this->stocks()->firstOrCreate([
             'location_id' => $location->getKey(),
-            'metric_id' => $metric_id
+            'metric_id' => $metric_id,
         ]);
     }
 }

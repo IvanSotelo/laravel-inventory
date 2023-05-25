@@ -10,9 +10,8 @@ class Warehouse extends Model
 
     protected $fillable = [
         'name',
-        'branch_id'
+        'branch_id',
     ];
-
 
     /**
      * The hasMany stocks relationship.
