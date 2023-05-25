@@ -32,18 +32,15 @@ trait HasAssembly
     /**
      * Adds an item to the current assembly.
      *
-     * @param Model            $part
-     * @param int|float|string $quantity
-     * @param array            $extra
+     * @param  int|float|string  $quantity
+     * @return $this
      *
      * @throws \IvanSotelo\Inventory\Exceptions\InvalidQuantityException
-     *
-     * @return $this
      */
     public function addAssemblyItem(Model $part, $quantity = 1, array $extra = [])
     {
         if ($this->isValidQuantity($quantity)) {
-            if (!$this->getAttribute('is_assembly')) {
+            if (! $this->getAttribute('is_assembly')) {
                 $this->makeAssembly();
             }
 
@@ -58,6 +55,7 @@ trait HasAssembly
                     'item' => $this,
                     'part' => $part,
                 ]);
+
                 return $this;
             }
         }
@@ -68,13 +66,10 @@ trait HasAssembly
     /**
      * Adds multiple parts to the current items assembly.
      *
-     * @param array            $parts
-     * @param int|float|string $quantity
-     * @param array            $extra
+     * @param  int|float|string  $quantity
+     * @return int
      *
      * @throws \IvanSotelo\Inventory\Exceptions\InvalidQuantityException
-     *
-     * @return int
      */
     public function addAssemblyItems(array $parts, $quantity = 1, array $extra = [])
     {
@@ -95,13 +90,11 @@ trait HasAssembly
      * Updates the inserted parts quantity for the current
      * item's assembly.
      *
-     * @param int|string|Model $part
-     * @param int|float|string $quantity
-     * @param array            $extra
+     * @param  int|string|Model  $part
+     * @param  int|float|string  $quantity
+     * @return $this|bool
      *
      * @throws \IvanSotelo\Inventory\Exceptions\InvalidQuantityException
-     *
-     * @return $this|bool
      */
     public function updateAssemblyItem($part, $quantity = 1, array $extra = [])
     {
@@ -130,13 +123,10 @@ trait HasAssembly
     /**
      * Updates multiple parts with the specified quantity.
      *
-     * @param array            $parts
-     * @param int|float|string $quantity
-     * @param array            $extra
+     * @param  int|float|string  $quantity
+     * @return int
      *
      * @throws \IvanSotelo\Inventory\Exceptions\InvalidQuantityException
-     *
-     * @return int
      */
     public function updateAssemblyItems(array $parts, $quantity, array $extra = [])
     {
@@ -157,8 +147,7 @@ trait HasAssembly
      * Removes the specified part from
      * the current items assembly.
      *
-     * @param int|string|Model $part
-     *
+     * @param  int|string|Model  $part
      * @return bool
      */
     public function removeAssemblyItem($part)
@@ -168,6 +157,7 @@ trait HasAssembly
                 'item' => $this,
                 'part' => $part,
             ]);
+
             return true;
         }
 
@@ -177,7 +167,6 @@ trait HasAssembly
     /**
      * Removes multiple parts from the current items assembly.
      *
-     * @param array $parts
      *
      * @return int
      */
@@ -200,7 +189,6 @@ trait HasAssembly
      * Scopes the current query to only retrieve
      * inventory items that are an assembly.
      *
-     * @param $query
      *
      * @return mixed
      */
@@ -214,7 +202,6 @@ trait HasAssembly
      * does not contain the current item. This
      * prevents infinite recursion.
      *
-     * @param Model $part
      *
      * @return bool
      *
