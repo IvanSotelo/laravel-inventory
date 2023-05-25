@@ -17,10 +17,6 @@ class CreateWarehousesTable extends Migration
 
             $table->string('name');
 
-            $table->integer('lft')->nullable()->index();
-            $table->integer('rgt')->nullable()->index();
-            $table->integer('depth')->nullable();
-
             $table->foreignId('branch_id')
             ->onUpdate('restrict')
             ->onDelete('cascade');
