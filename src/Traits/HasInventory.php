@@ -76,10 +76,10 @@ trait HasInventory
      * @param  string  $reason
      * @return array
      */
-    public function takeFromLocation($quantity, Model $location, $reason = '')
+    public function takeFromLocation($quantity, Model $location, $metric_id, $reason = '')
     {
-        $stock = $this->getStockFromLocation($location);
-
+        $stock = $this->getStockFromLocation($location, $metric_id);
+        
         if ($stock && $stock->take($quantity, $reason)) {
             return $this;
         }
@@ -97,8 +97,8 @@ trait HasInventory
      */
     public function putToLocation($quantity, Model $location, $metric_id, $reason = '', $cost = 0)
     {
-        $stock = $this->getStockFromLocation($location);
-
+        $stock = $this->getStockFromLocation($location, $metric_id);
+        
         if ($stock && $stock->put($quantity, $reason, $cost)) {
             return $this;
         }
