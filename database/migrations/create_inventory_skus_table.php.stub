@@ -12,7 +12,7 @@ class CreateInventorySkusTable extends Migration
     public function up()
     {
         Schema::create('inventory_skus', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->string('code');
 
             $table->string('inventoriable_type');
