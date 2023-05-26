@@ -30,10 +30,11 @@ class CreateInventoryMovementsTable extends Migration
             ->onUpdate('restrict')
             ->onDelete('cascade');
 
-            $table->integer('stock_id')->unsigned();
-            $table->foreign('stock_id')->references('id')->on('inventory_stocks')
-                ->onUpdate('restrict')
-                ->onDelete('cascade');
+
+            $table->foreignId('stock_id')
+            ->constrained('inventory_stocks')
+            ->onUpdate('restrict')
+            ->onDelete('cascade');
 
             $table->timestamps();
             $table->softDeletes();
