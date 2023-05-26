@@ -12,17 +12,16 @@ class CreateLocationsTable extends Migration
     public function up()
     {
         Schema::create('locations', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->timestamps();
             $table->integer('lft')->nullable()->index();
             $table->integer('rgt')->nullable()->index();
             $table->integer('depth')->nullable();
             $table->string('name');
-            $table->integer('warehouse_id')->unsigned();
 
-            $table->foreign('warehouse_id')->references('id')->on('warehouses')
-                ->onUpdate('restrict')
-                ->onDelete('cascade');
+            $table->foreignId('warehouse_id')
+            ->onUpdate('restrict')
+            ->onDelete('cascade');
         });
     }
 
