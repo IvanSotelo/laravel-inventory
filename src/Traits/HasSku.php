@@ -2,9 +2,9 @@
 
 namespace IvanSotelo\Inventory\Traits;
 
-use Illuminate\Support\Facades\Lang;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Lang;
 use IvanSotelo\Inventory\Exceptions\SkuAlreadyExistsException;
 
 trait HasSku
