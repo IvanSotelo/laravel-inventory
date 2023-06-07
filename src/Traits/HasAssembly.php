@@ -82,7 +82,7 @@ trait HasAssembly
      *
      * @throws \IvanSotelo\Inventory\Exceptions\InvalidQuantityException
      */
-    public function addAssemblyItems(array $parts, $quantity = 1, array $extra = [])
+    public function addAssemblyItems(Collection $parts, $quantity = 1, array $extra = [])
     {
         $count = 0;
 
