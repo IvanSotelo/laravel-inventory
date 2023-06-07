@@ -2,20 +2,13 @@
 
 namespace IvanSotelo\Inventory\Traits;
 
+use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Database\Eloquent\Model;
+use IvanSotelo\Inventory\Exceptions\SkuAlreadyExistsException;
 
 trait HasSku
 {
-    /**
-     * The hasOne sku relationship.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
-     */
-    public function sku()
-    {
-        return $this->morphOne(InventorySku::class, 'skuriable');
-    }
-
     /**
      * Returns an item record by the specified SKU code.
      *
@@ -51,6 +44,16 @@ trait HasSku
          * Return false on failure
          */
         return false;
+    }
+
+    /**
+     * The hasOne sku relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
+     */
+    public function sku()
+    {
+        return $this->morphOne(InventorySku::class, 'skuriable');
     }
 
     /**

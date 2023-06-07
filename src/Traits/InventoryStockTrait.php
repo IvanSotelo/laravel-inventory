@@ -170,6 +170,71 @@ trait InventoryStockTrait
     }
 
     /**
+     * Returns true if there is enough stock for the specified quantity being taken.
+     * Throws NotEnoughStockException otherwise.
+     *
+     * @param  int|float|string  $quantity
+     * @return bool
+     *
+     * @throws NotEnoughStockException
+     */
+    public function hasEnoughStock($quantity = 0)
+    {
+        $available = $this->getAttribute('quantity');
+
+        if ((float) $available === (float) $quantity || $available > $quantity) {
+            return true;
+        }
+
+        $message = Lang::get('inventory::exceptions.NotEnoughStockException', [
+            'quantity' => $quantity,
+            'available' => $available,
+        ]);
+
+        throw new NotEnoughStockException($message);
+    }
+
+    /**
+     * Returns the last movement on the current stock record.
+     *
+     * @return bool|Model
+     */
+    public function getLastMovement()
+    {
+        $movement = $this->movements()->orderBy('created_at', 'DESC')->first();
+
+        if ($movement) {
+            return $movement;
+        }
+
+        return false;
+    }
+
+    /**
+     * Returns a movement depending on the specified argument. If an object is supplied, it is checked if it
+     * is an instance of an eloquent model. If a numeric value is entered, it is retrieved by it's ID.
+     *
+     * @param  int|string|Model  $movement
+     * @return mixed
+     *
+     * @throws InvalidMovementException
+     */
+    public function getMovement($movement)
+    {
+        if ($this->isModel($movement)) {
+            return $movement;
+        } elseif (is_numeric($movement)) {
+            return $this->getMovementById($movement);
+        } else {
+            $message = Lang::get('inventory::exceptions.InvalidMovementException', [
+                'movement' => $movement,
+            ]);
+
+            throw new InvalidMovementException($message);
+        }
+    }
+
+    /**
      * Processes removing quantity from the current stock.
      *
      * @param  int|float|string  $taking
@@ -266,35 +331,6 @@ trait InventoryStockTrait
     }
 
     /**
-     * Processes the stock moving from it's current
-     * location, to the specified location.
-     *
-     * @return bool
-     */
-    private function processMoveOperation(Model $location)
-    {
-        $this->setAttribute('location_id', $location->getKey());
-
-        $this->dbStartTransaction();
-
-        try {
-            if ($this->save()) {
-                $this->dbCommitTransaction();
-
-                $this->fireEvent('inventory.stock.moved', [
-                    'stock' => $this,
-                ]);
-
-                return true;
-            }
-        } catch (\Exception $e) {
-            $this->dbRollbackTransaction();
-        }
-
-        return false;
-    }
-
-    /**
      * Processes a single rollback operation.
      *
      * @param  bool  $recursive
@@ -371,6 +407,72 @@ trait InventoryStockTrait
     }
 
     /**
+     * Reverses the cost of a movement.
+     */
+    protected function reverseCost()
+    {
+        $cost = $this->getAttribute('cost');
+
+        if ($this->isPositive($cost)) {
+            $this->setCost(-abs($cost));
+        } else {
+            $this->setCost(abs($cost));
+        }
+    }
+
+    /**
+     * Retrieves a movement by the specified ID.
+     *
+     * @param  int|string  $id
+     * @return null|Model
+     */
+    protected function getMovementById($id)
+    {
+        return $this->movements()->find($id);
+    }
+
+    /**
+     * Returns true/false from the configuration file determining
+     * whether or not to rollback costs when a rollback occurs on
+     * a stock.
+     *
+     * @return bool
+     */
+    protected function rollbackCostEnabled()
+    {
+        return Config::get('inventory.rollback_cost');
+    }
+
+    /**
+     * Processes the stock moving from it's current
+     * location, to the specified location.
+     *
+     * @return bool
+     */
+    private function processMoveOperation(Model $location)
+    {
+        $this->setAttribute('location_id', $location->getKey());
+
+        $this->dbStartTransaction();
+
+        try {
+            if ($this->save()) {
+                $this->dbCommitTransaction();
+
+                $this->fireEvent('inventory.stock.moved', [
+                    'stock' => $this,
+                ]);
+
+                return true;
+            }
+        } catch (\Exception $e) {
+            $this->dbRollbackTransaction();
+        }
+
+        return false;
+    }
+
+    /**
      * Creates a new stock movement record.
      *
      * @param  int|float|string  $before
@@ -413,96 +515,6 @@ trait InventoryStockTrait
     }
 
     /**
-     * Reverses the cost of a movement.
-     */
-    protected function reverseCost()
-    {
-        $cost = $this->getAttribute('cost');
-
-        if ($this->isPositive($cost)) {
-            $this->setCost(-abs($cost));
-        } else {
-            $this->setCost(abs($cost));
-        }
-    }
-
-    /**
-     * Returns true if there is enough stock for the specified quantity being taken.
-     * Throws NotEnoughStockException otherwise.
-     *
-     * @param  int|float|string  $quantity
-     * @return bool
-     *
-     * @throws NotEnoughStockException
-     */
-    public function hasEnoughStock($quantity = 0)
-    {
-        $available = $this->getAttribute('quantity');
-
-        if ((float) $available === (float) $quantity || $available > $quantity) {
-            return true;
-        }
-
-        $message = Lang::get('inventory::exceptions.NotEnoughStockException', [
-            'quantity' => $quantity,
-            'available' => $available,
-        ]);
-
-        throw new NotEnoughStockException($message);
-    }
-
-    /**
-     * Returns the last movement on the current stock record.
-     *
-     * @return bool|Model
-     */
-    public function getLastMovement()
-    {
-        $movement = $this->movements()->orderBy('created_at', 'DESC')->first();
-
-        if ($movement) {
-            return $movement;
-        }
-
-        return false;
-    }
-
-    /**
-     * Returns a movement depending on the specified argument. If an object is supplied, it is checked if it
-     * is an instance of an eloquent model. If a numeric value is entered, it is retrieved by it's ID.
-     *
-     * @param  int|string|Model  $movement
-     * @return mixed
-     *
-     * @throws InvalidMovementException
-     */
-    public function getMovement($movement)
-    {
-        if ($this->isModel($movement)) {
-            return $movement;
-        } elseif (is_numeric($movement)) {
-            return $this->getMovementById($movement);
-        } else {
-            $message = Lang::get('inventory::exceptions.InvalidMovementException', [
-                'movement' => $movement,
-            ]);
-
-            throw new InvalidMovementException($message);
-        }
-    }
-
-    /**
-     * Retrieves a movement by the specified ID.
-     *
-     * @param  int|string  $id
-     * @return null|Model
-     */
-    protected function getMovementById($id)
-    {
-        return $this->movements()->find($id);
-    }
-
-    /**
      * Returns true/false from the configuration file determining
      * whether or not stock movements can have the same before and after
      * quantities.
@@ -512,17 +524,5 @@ trait InventoryStockTrait
     private function allowDuplicateMovementsEnabled()
     {
         return Config::get('inventory.allow_duplicate_movements');
-    }
-
-    /**
-     * Returns true/false from the configuration file determining
-     * whether or not to rollback costs when a rollback occurs on
-     * a stock.
-     *
-     * @return bool
-     */
-    protected function rollbackCostEnabled()
-    {
-        return Config::get('inventory.rollback_cost');
     }
 }

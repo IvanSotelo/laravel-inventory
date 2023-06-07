@@ -31,13 +31,6 @@ class TestCase extends Orchestra
         $this->secondInventoryModel = InventoryModel::find(2);
     }
 
-    protected function getPackageProviders($app)
-    {
-        return [
-            InventoryServiceProvider::class,
-        ];
-    }
-
     public function getEnvironmentSetUp($app)
     {
         $app['config']->set('database.default', 'sqlite');
@@ -51,6 +44,13 @@ class TestCase extends Orchestra
         include_once __DIR__.'/../database/migrations/create_inventory_table.php.stub';
         (new \CreatePackageTable())->up();
         */
+    }
+
+    protected function getPackageProviders($app)
+    {
+        return [
+            InventoryServiceProvider::class,
+        ];
     }
 
     protected function setUpDatabase($app)

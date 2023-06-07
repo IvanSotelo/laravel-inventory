@@ -2,7 +2,6 @@
 
 namespace IvanSotelo\Inventory\Traits;
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Lang;
 use IvanSotelo\Inventory\Exceptions\NoUserLoggedInException;
@@ -31,8 +30,8 @@ trait UserIdentificationTrait
             return null;
         }
 
-        if (Auth::check()) {
-            return Auth::user()->getAuthIdentifier();
+        if (auth()->check()) {
+            return auth()->user()->getAuthIdentifier();
         }
 
         /*

@@ -7,13 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 trait InventoryStockMovementTrait
 {
     /**
-     * The belongsTo stock relationship.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    abstract public function stock();
-
-    /**
      * Overrides the models boot function to set
      * the user ID automatically to every new record.
      *
@@ -25,6 +18,13 @@ trait InventoryStockMovementTrait
             $record->setAttribute('user_id', $record->getCurrentUserId());
         });
     }
+
+    /**
+     * The belongsTo stock relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    abstract public function stock();
 
     /**
      * Rolls back the current movement.

@@ -2,11 +2,22 @@
 
 namespace IvanSotelo\Inventory\Traits;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use IvanSotelo\Inventory\Exceptions\InvalidPartException;
 
 trait HasAssembly
 {
+    /*
+     * Helpers for starting database transactions
+     */
+    use DatabaseTransactionTrait;
+
+    /*
+     * Verification helper functions
+     */
+    use VerifyTrait;
+
     /**
      * The belongsToMany assemblies relationship.
      *
@@ -128,7 +139,7 @@ trait HasAssembly
      *
      * @throws \IvanSotelo\Inventory\Exceptions\InvalidQuantityException
      */
-    public function updateAssemblyItems(array $parts, $quantity, array $extra = [])
+    public function updateAssemblyItems(Collection $parts, $quantity, array $extra = [])
     {
         $count = 0;
 
@@ -192,7 +203,7 @@ trait HasAssembly
      *
      * @return mixed
      */
-    public function scopeAssembly(Builder $query)
+    public function scopeAssembly($query)
     {
         return $query->where('is_assembly', true);
     }

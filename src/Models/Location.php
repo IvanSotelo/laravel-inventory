@@ -4,6 +4,11 @@ namespace IvanSotelo\Inventory\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * IvanSotelo\Inventory\Models\InventoryStock
+ *
+ * @property int $warehouse_id
+ */
 class Location extends Model
 {
     protected $table = 'locations';

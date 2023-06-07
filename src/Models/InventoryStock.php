@@ -3,8 +3,15 @@
 namespace IvanSotelo\Inventory\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use IvanSotelo\Inventory\Traits\InventoryStockTrait;
 
+/**
+ * IvanSotelo\Inventory\Models\InventoryStock
+ *
+ * @property Location $location
+ */
 class InventoryStock extends Model
 {
     use InventoryStockTrait;
@@ -30,30 +37,24 @@ class InventoryStock extends Model
 
     /**
      * The hasMany movements relationship.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function movements()
+    public function movements(): HasMany
     {
         return $this->hasMany(InventoryMovement::class, 'stock_id', 'id');
     }
 
     /**
      * The belongsTo location relationship.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function location()
+    public function location(): BelongsTo
     {
-        return $this->belongsTo(Location::class)->with('warehouse');
+        return $this->belongsTo(Location::class);
     }
 
     /**
      * The belongsTo metric relationship.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function metric()
+    public function metric(): BelongsTo
     {
         return $this->belongsTo(Metric::class);
     }

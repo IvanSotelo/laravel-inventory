@@ -34,6 +34,18 @@ trait VerifyTrait
     }
 
     /**
+     * Returns true/false if the specified model is a subclass
+     * of the Eloquent Model.
+     *
+     * @param  mixed  $model
+     * @return bool
+     */
+    protected function isModel($model)
+    {
+        return $model instanceof Model;
+    }
+
+    /**
      * Returns true/false if the number specified is numeric.
      *
      * @param  int|float|string  $number
@@ -57,17 +69,5 @@ trait VerifyTrait
         }
 
         return false;
-    }
-
-    /**
-     * Returns true/false if the specified model is a subclass
-     * of the Eloquent Model.
-     *
-     * @param  mixed  $model
-     * @return bool
-     */
-    protected function isModel($model)
-    {
-        return $model instanceof Model;
     }
 }
