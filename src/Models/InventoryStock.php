@@ -48,7 +48,7 @@ class InventoryStock extends Model
      */
     public function location(): BelongsTo
     {
-        return $this->belongsTo(Location::class);
+        return $this->belongsTo(Location::class)->with('warehouse');
     }
 
     /**
