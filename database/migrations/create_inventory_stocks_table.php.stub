@@ -41,6 +41,7 @@ class CreateInventoryStocksTable extends Migration
             ->onDelete('cascade');
 
             $table->foreignId('warehouse_id')
+            ->nullable()
             ->onUpdate('restrict')
             ->onDelete('cascade');
 

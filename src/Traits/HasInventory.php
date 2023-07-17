@@ -95,11 +95,11 @@ trait HasInventory
      * @param  int|float|string  $cost
      * @return array
      */
-    public function putToLocation($quantity, Model $location, $metric_id, $reason = '', $cost = 0)
+    public function putToLocation($quantity, Model $location, $metric_id, $warehouse_id, $reason = '', $cost = 0)
     {
         $stock = $this->getStockFromLocation($location, $metric_id);
 
-        if ($stock && $stock->put($quantity, $reason, $cost)) {
+        if ($stock && $stock->put($quantity, $reason, $cost, $warehouse_id)) {
             return $this;
         }
 
