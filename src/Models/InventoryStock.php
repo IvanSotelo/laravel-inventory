@@ -58,4 +58,9 @@ class InventoryStock extends Model
     {
         return $this->belongsTo(Metric::class);
     }
+
+    public function warehouse()
+    {
+        return $this->belongsTo(Warehouse::class, 'warehouse_id');
+    }
 }
