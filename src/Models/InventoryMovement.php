@@ -30,7 +30,7 @@ class InventoryMovement extends Model
      */
     public function stock()
     {
-        return $this->belongsTo(InventoryStock::class);
+        return $this->belongsTo(InventoryStock::class)->with('location');
     }
 
     /**
