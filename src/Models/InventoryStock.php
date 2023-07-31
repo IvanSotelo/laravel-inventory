@@ -48,7 +48,7 @@ class InventoryStock extends Model
      */
     public function location(): BelongsTo
     {
-        return $this->belongsTo(Location::class)->with('warehouse');
+        return $this->belongsTo(Location::class);
     }
 
     /**
@@ -57,5 +57,10 @@ class InventoryStock extends Model
     public function metric(): BelongsTo
     {
         return $this->belongsTo(Metric::class);
+    }
+
+    public function warehouse()
+    {
+        return $this->belongsTo(Warehouse::class, 'warehouse_id');
     }
 }
