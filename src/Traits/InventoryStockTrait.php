@@ -134,7 +134,7 @@ trait InventoryStockTrait
      * @param  int|float|string  $cost
      * @return $this
      */
-    public function put($quantity, $reason = '', $cost = 0, $warehouse_id)
+    public function put($quantity, $reason, $cost, $warehouse_id)
     {
         return $this->processPutOperation($quantity, $reason, $cost, $warehouse_id);
     }
@@ -291,7 +291,7 @@ trait InventoryStockTrait
      * @param  int|float|string  $cost
      * @return $this|bool
      */
-    protected function processPutOperation($putting, $reason = '', $cost = 0, $warehouse_id)
+    protected function processPutOperation($putting, $reason, $cost, $warehouse_id)
     {
         if ($this->isValidQuantity($putting)) {
             $current = $this->getAttribute('quantity');
@@ -305,7 +305,7 @@ trait InventoryStockTrait
             }
 
             $this->setAttribute('quantity', $total);
-            
+
             $this->setAttribute('warehouse_id', $warehouse_id);
 
             $this->setReason($reason);
